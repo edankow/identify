@@ -1,0 +1,392 @@
+
+        :root { 
+            --primary: #2c3e50; 
+            --accent: #27ae60; 
+            --bg: #f4f7f6; 
+            --text: #333; 
+            --inat-green: #74ac00;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--text); 
+            line-height: 1.5; 
+        }
+
+        /* --- Header & Token Bar --- */
+        #token-bar {
+            background: #333; color: white; display: flex; align-items: center;
+            justify-content: space-between; padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 1000;
+        }
+        #token-status { font-weight: bold; padding: 5px 10px; border-radius: 4px; }
+        .status-good { background: var(--inat-green); }
+        .status-bad { background: #d9534f; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        #token-input { padding: 8px; width: 250px; border-radius: 4px; border: none; margin-left: 10px; }
+        .token-link { color: #add8e6; font-size: 0.8em; margin-right: 15px; text-decoration: underline; }
+
+        /* --- Layout --- */
+.workspace-grid {
+    display: flex;
+    justify-content: center; 
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+        /* --- iNat Viewer Section --- */
+.viewer-panel {
+    flex: 1 1 500px; /* Grow: 1, Shrink: 1, Base: 500px */
+    max-width: 800px; /* Prevents the photo from getting absurdly large */
+    background: #e9ecef;
+    padding: 20px;
+    border-radius: 12px;
+    height: fit-content;
+}
+
+
+.matrix-container {
+    flex: 2 1 600px; /* It grows twice as fast as the viewer side */
+    display: flex;
+    justify-content: center;
+    min-width: 0;
+}
+
+
+
+.matrix-panel {
+    display: grid;
+    /* menu takes ~25%, content takes ~75% */
+    grid-template-columns: minmax(200px, 25%) 1fr; 
+    gap: 20px;
+    width: 100%;
+    /* This caps the entire workspace so it doesn't stretch forever */
+    max-width: 1400px; 
+    margin: 0 auto;
+}
+
+        .card { width: 100%; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Updated Image Container for Zoom functionality */
+        .img-container { 
+            width: 100%; 
+            height: 450px; 
+            background: #000; 
+            overflow: hidden; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; cursor: zoom-in; }
+
+        /* Zoom Overlay Styles */
+        #zoom-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: black; 
+            z-index: 100001; 
+            cursor: crosshair; 
+            overflow: hidden; 
+        }
+        #zoomed-image { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            transform: scale(3); 
+            transform-origin: center; 
+            transition: transform 0.1s ease-out; 
+        }
+
+/* Container to hold Text on Left and Buttons on Right */
+.card-content-split {
+    display: flex;
+    align-items: stretch; /* Makes both halves equal height */
+    border-top: 1px solid #eee;
+}
+
+/* Left Half: Text Information */
+.info { 
+    flex: 1;           /* Takes up 50% of the space */
+    padding: 15px; 
+}
+
+/* Right Half: Restored original 'Pretty' styling */
+.btn-group { 
+    flex: 1;
+    padding: 10px; 
+    display: flex;
+    flex-direction: column; 
+    gap: 5px; /* Original gap */
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Ensure the main container can center its contents */
+.main-container {
+    display: flex;
+    justify-content: center; /* Centers the content when space is available */
+    gap: 20px;
+    padding: 20px;
+    transition: all 0.3s ease; /* Smoothly animates the resizing */
+}
+
+/* Restored original button styling */
+.btn-group button { 
+    width: 100%;
+    padding: 12px; 
+    cursor: pointer; 
+    border: none; 
+    border-radius: 4px; 
+    font-weight: bold; 
+    font-size: 0.8rem; 
+}
+
+        .btn-id { background: var(--inat-green); color: white; }
+        .btn-skip { background: #ccc; }
+        .btn-action { background: var(--primary); color: white; }
+        
+        .geo-hierarchy {
+            display: block; color: #444; font-size: 0.8em; margin-top: 10px;
+            background: #eef2e6; padding: 8px; border-left: 4px solid var(--inat-green);
+            border-radius: 4px; line-height: 1.5;
+        }
+
+
+
+.question-menu { 
+    background: white; 
+    border-radius: 12px; 
+    overflow-y: auto; /* Enable vertical scrolling */
+    max-height: 600px; /* Limits the height so it doesn't go down too far */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    position: sticky; /* Keeps it in view while scrolling the page */
+    top: 80px; 
+}
+
+/* --- Custom "Shadowy" Scrollbar --- */
+.question-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.identification-area {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+body.wide-layout .matrix-container {
+    flex: 1;
+    max-width: 100%;
+}
+
+body.wide-layout .identification-area {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-areas: 
+        "question results"
+        "summary results";
+    align-items: start;
+}
+
+.token-section-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    white-space: nowrap; /* Prevents wrapping if the window gets small */
+    z-index: 1;
+}
+
+.btn-toggle {
+    background: #444;
+    color: #fff;
+    border: 1px solid #666;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
+
+.btn-toggle:hover {
+    background: #555;
+}
+
+.thumb-strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.4) !important; /* Semi-transparent overlay */
+    padding: 8px !important;
+    box-sizing: border-box;
+}
+
+.thumb-strip img {
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
+
+.thumb-strip img:hover {
+    transform: scale(1.1);
+}
+
+body.wide-layout .active-question-section { grid-area: question; }
+body.wide-layout .results-sidebar { grid-area: results; margin-top: 0 !important; }
+body.wide-layout .summary-box { grid-area: summary; margin-top: 0 !important; }
+
+
+.question-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.question-menu::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1); /* Subtle "Shadow" look */
+    border-radius: 10px;
+}
+
+.question-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* For Firefox */
+.question-menu {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+        .menu-item { 
+            padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: all 0.2s; font-size: 0.9rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .menu-item.active { background: var(--accent) !important; color: white; border-left: 6px solid #1e8449; }
+.active-question-section { 
+    max-width: 800px; 
+
+background: white; padding: 25px; border-radius: 12px; min-height: 250px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+
+
+}
+        .summary-box { display: none; background: #fff; border-left: 6px solid var(--primary); padding: 20px; border-radius: 8px; margin-top: 20px;   max-width: 800px; }
+
+body.wide-layout .summary-box { 
+    display: block; /* Show only when viewer panel is hidden */
+    grid-area: summary; 
+    margin-top: 0 !important; 
+}
+
+
+        .results-sidebar { background: var(--primary); color: white; padding: 15px; border-radius: 12px; margin-top: 5px;    max-width: 800px; 
+ }
+        
+        .option { 
+            background: #f0f2f5; border: 1px solid #ddd; padding: 12px; width: 100%; 
+            border-radius: 8px; cursor: pointer; text-align: left; margin-bottom: 8px; 
+        }
+        .option.active { background: var(--accent); color: white; border-color: #1e8449; font-weight: bold; }
+        .reset-btn { background: #e74c3c; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        
+        /* --- Modal Styling --- */
+        .modal { 
+            display: none; position: fixed; z-index: 200000; left: 0; top: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.7); 
+            justify-content: center; align-items: center;
+        }
+        .modal-content { 
+            background: white; padding: 30px; border-radius: 12px; 
+            width: 400px; display: flex; flex-direction: column; gap: 15px; 
+        }
+        .modal-content input, .modal-content textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+
+.comments-section {
+    background: #fdfdfd;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.comment-item {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+/* Style for actual ID remarks */
+.comment-item span[style*="color:#2980b9"] {
+    background: #eef9ff;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.btn-post {
+    background-color: #27ae60; /* A different green than the ID button */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1; /* Helps buttons sit evenly in the grid */
+    font-weight: bold;
+}
+
+.btn-post:hover {
+    background-color: #219150;
+}
+
+/* Chrome, Safari, Edge, Opera */
+#manual-taxon-id::-webkit-outer-spin-button,
+#manual-taxon-id::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+#manual-taxon-id {
+  -moz-appearance: textfield;
+}
+
+.about-section {
+    max-width: 600px;      /* Limits the width */
+    margin: 40px auto;    /* Centers horizontally and adds space at the top/bottom */
+    padding: 20px;
+    text-align: justified;   /* Centers the text inside */
+    color: #555;          /* Softer color for secondary information */
+    border-top: 1px solid #ddd; /* Optional line to separate from the workspace */
+}
+
+.about-section h3 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.about-section p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+
+
+        .hidden { display: none !important; }
+        .breadcrumb-container { background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 0.8rem; }
+        .breadcrumb-active { font-weight: bold; color: var(--accent); }

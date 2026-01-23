@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fly ID & iNat Queue Workspace</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="zoom-overlay" onclick="closeZoom()">
+    <img id="zoomed-image" src="">
+</div>
+
+<div id="modal-id" class="modal">
+    <div class="modal-content">
+        <h3>Add Identification</h3>
+
+        <div id="suggested-id-area" style="margin-bottom: 15px; padding: 10px; background: #eef9ff; border: 1px dashed #2980b9; border-radius: 4px; font-size: 0.9rem; display: none;">
+            <strong>Matrix Suggestion:</strong> <span id="suggestion-text"></span>
+        </div>
+
+        <input type="number" id="manual-taxon-id" placeholder="Enter Taxon ID Number...">
+        <div style="display:flex; gap:10px;">
+            <button onclick="submitManualID()" class="btn-id" style="flex:1; padding:10px; border:none; border-radius:4px;">Submit</button>
+            <button onclick="closeModals()" class="btn-skip" style="flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-comment" class="modal">
+    <div class="modal-content">
+        <h3>Add Comment</h3>
+        <textarea id="comment-body" rows="4" placeholder="Type your comment..."></textarea>
+        <div style="display:flex; gap:10px;">
+            <button onclick="submitComment()" class="btn-action" style="flex:1; padding:10px; border:none; border-radius:4px;">Post Comment</button>
+            <button onclick="closeModals()" class="btn-skip" style="flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="token-bar">
+    <div>
+        <!--iNat Status: --><span id="token-status"><!--Checking...--></span>
+        <span id="queue-count" style="font-size: 0.8em; opacity: 0.8;"><!-- (Connecting...)--></span>
+    </div>
+
+    <div class="token-section-center">
+        Interactive field-character key to <i>Lucilia</i> of the USA and Canada
+    </div>
+
+<button id="toggle-viewer-btn" onclick="toggleViewerPanel()" class="btn-toggle">Hide iNat interface</button>
+    <div id="token-controls" class="hidden">
+        <a href="https://www.inaturalist.org/users/api_token" target="_blank" class="token-link">Get Token</a>
+        <input type="text" id="token-input" placeholder="Paste api_token...">
+        <button onclick="updateTokenManual()" style="background:var(--inat-green); color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Save</button>
+    </div>
+</div>
+
+<div class="workspace-grid">
+    <div class="viewer-panel">
+        <div id="observation-grid">
+            <div style="text-align:center; padding: 50px; color: #666;">Waiting for token/data...</div>
+        </div>
+    </div>
+
+    <div class="matrix-container">
+        <div class="matrix-panel">
+            <div class="question-menu" id="question-menu"></div>
+            <div class="identification-area">
+                <div class="active-question-section" id="active-question-area">
+                    <div style="color:#999; text-align:center; padding-top:50px;">Select a trait to begin identification.</div>
+                </div>
+                <div class="summary-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0;">Diagnostic Narrative</h4>
+<button id="copy-narrative-btn" onclick="copyNarrativeToClipboard()" style="padding: 4px 8px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #f8f9fa; font-size: 0.7rem;">Copy to Clipboard</button>
+                    </div>
+                    <p id="summary-content" style="font-size: 0.9rem; margin:0;">Select traits to generate description.</p>
+                </div>
+                <div class="results-sidebar">
+                    <h4 style="margin:0 0 10px 0;">Matching Taxa</h4>
+                    <div id="taxonomic-breadcrumb"></div>
+                    <div id="results-list" style="font-size: 0.9rem; max-height: 150px; overflow-y: auto;"></div>
+                    <button class="reset-btn" onclick="resetMatrix()">Reset Matrix</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="regions.js"></script>
+<script src="traits.js"></script>
+<script src="flyData.js"></script>
+<script src="taxa.js"></script>
+
+<script>
+    /* --- SHARED STATE --- */
+    let MY_USER_ID = null;
+    let MY_TOKEN = localStorage.getItem('inat_token') || "";
+    let FINISHED_OBS_IDS = [];
+    let OBSERVATION_QUEUE = [];
+    let CURRENT_OBS_ID = null;
+    const API_URL = "https://api.inaturalist.org/v1/observations?per_page=25&taxon_id=61858&place_id=6712,1&only_id=false&fields=all&quality_grade=needs_id";
+
+    /* --- ZOOM LOGIC --- */
+    function openZoom(url) {
+        const overlay = document.getElementById('zoom-overlay');
+        const img = document.getElementById('zoomed-image');
+        img.src = url; 
+        overlay.style.display = 'block';
+        window.addEventListener('mousemove', handleZoomMove);
+    }
+
+    function closeZoom() {
+        document.getElementById('zoom-overlay').style.display = 'none';
+        window.removeEventListener('mousemove', handleZoomMove);
+    }
+
+    function handleZoomMove(e) {
+        const img = document.getElementById('zoomed-image');
+        const x = (e.clientX / window.innerWidth) * 100;
+        const y = (e.clientY / window.innerHeight) * 100;
+        img.style.transformOrigin = `${x}% ${y}%`;
+    }
+
+    /* --- MODAL LOGIC --- */
+function openIDModal() { 
+    document.getElementById('modal-id').style.display = 'flex'; 
+
+// Step A: Calculate matches
+const filtered = flyData.filter(fly => {
+    return Object.keys(currentFilters).every(key => {
+        if (currentFilters[key] === null) return true;
+        if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+        if (fly[key] === undefined) return true;
+        return fly[key] && fly[key].includes(currentFilters[key]);
+    });
+});
+
+// Step B: Get the common group name
+const common = getLowestCommonTaxon(filtered);
+
+if (common && common.length > 0) {
+        const lowestName = common[common.length - 1];
+        const taxonInfo = taxa.find(t => t.name === lowestName);
+        
+        if (taxonInfo) {
+            document.getElementById('suggested-id-area').innerHTML = "Suggestion: " + lowestName;
+            document.getElementById('suggested-id-area').style.display = 'block';
+            document.getElementById('manual-taxon-id').value = taxonInfo.taxonId;
+        } else {
+            // Case where common taxon name isn't in your taxa.js list
+            document.getElementById('suggested-id-area').style.display = 'none';
+            document.getElementById('manual-taxon-id').value = '';
+        }
+    } else {
+        // THIS IS THE FIX: Clear everything if there are no matches
+        document.getElementById('suggested-id-area').style.display = 'none';
+        document.getElementById('manual-taxon-id').value = '';
+    }
+}
+
+    function openCommentModal() { document.getElementById('modal-comment').style.display = 'flex'; }
+    function closeModals() { 
+        document.getElementById('modal-id').style.display = 'none'; 
+        document.getElementById('modal-comment').style.display = 'none'; 
+    }
+
+
+    async function submitManualID() {
+        const tId = document.getElementById('manual-taxon-id').value;
+        if (!tId) return;
+
+        sendIdentification(CURRENT_OBS_ID, tId);
+        closeModals();
+
+        document.getElementById('manual-taxon-id').value = '';
+
+	excludeAndNext(CURRENT_OBS_ID);
+    }
+
+    async function submitComment() {
+        const body = document.getElementById('comment-body').value;
+        if (!body) return;
+        try {
+            await fetch("https://api.inaturalist.org/v1/comments", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+                body: JSON.stringify({ comment: { body: body, parent_id: CURRENT_OBS_ID, parent_type: "Observation" } })
+            });
+            closeModals();
+            document.getElementById('comment-body').value = '';
+        } catch (e) { alert("Comment failed"); }
+    }
+
+function toggleViewerPanel() {
+    const viewerPanel = document.querySelector('.viewer-panel');
+    const btn = document.getElementById('toggle-viewer-btn');
+    
+    if (viewerPanel.style.display === 'none') {
+        viewerPanel.style.display = 'block';
+        document.body.classList.remove('wide-layout');
+        btn.innerText = "Hide iNat interface";
+    } else {
+        viewerPanel.style.display = 'none';
+        document.body.classList.add('wide-layout');
+        btn.innerText = "Show iNat interface";
+    }
+}
+
+function copyNarrativeToClipboard() {
+    const content = document.getElementById('summary-content');
+    const btn = document.getElementById('copy-narrative-btn');
+    
+    // We use .innerText to get the text without the HTML <strong> tags
+    const textToCopy = content.innerText;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // Visual feedback that it worked
+        const originalText = btn.innerText;
+        btn.innerText = "Copied!";
+        btn.style.background = "#eef9ff";
+        
+        // Reset the button after 2 seconds
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = "#f8f9fa";
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+
+    /* --- iNAT VIEWER LOGIC --- */
+    function isTokenValid(token) {
+        if (!token || token.length < 20) return false;
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return Date.now() < (payload.exp * 1000);
+        } catch (e) { return false; }
+    }
+
+    async function updateStatusUI() {
+        const statusEl = document.getElementById('token-status');
+        const controls = document.getElementById('token-controls');
+        const viewerPanel = document.querySelector('.viewer-panel');
+	const toggleBtn = document.getElementById('toggle-viewer-btn');
+        if (!isTokenValid(MY_TOKEN)) {
+            statusEl.innerText = "";<!--versus "EXPIRED/MISSING" -->
+            statusEl.className = "";<!-- versus "status-bad" -->
+            controls.classList.remove('hidden');
+            if (viewerPanel) viewerPanel.style.display = 'none';
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+            document.body.classList.add('wide-layout'); 
+            return;
+        }
+        try {
+            const res = await fetch("https://api.inaturalist.org/v1/users/me", {
+                headers: { "Authorization": `Bearer ${MY_TOKEN}` }
+            });
+            const userData = await res.json();
+            if (res.ok && userData.results?.length > 0) {
+                const user = userData.results[0];
+                MY_USER_ID = user.id;
+                statusEl.innerText = `ACTIVE: ${user.login}`;
+                statusEl.className = "status-good";
+                controls.classList.add('hidden');
+                if (toggleBtn) toggleBtn.classList.remove('hidden');
+                if (viewerPanel) viewerPanel.style.display = 'block';
+                document.body.classList.remove('wide-layout');
+            } else { throw new Error(); }
+        } catch (e) {
+            statusEl.innerText = "TOKEN ERROR";
+            statusEl.className = "status-bad";
+            controls.classList.remove('hidden');
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+            if (viewerPanel) viewerPanel.style.display = 'none';
+            document.body.classList.add('wide-layout');
+        }
+    }
+
+    async function fetchObservations() {
+        if (!MY_USER_ID) { await updateStatusUI(); if (!MY_USER_ID) return; }
+        if (OBSERVATION_QUEUE.length > 0) { showNextFromQueue(); return; }
+        const queueCountEl = document.getElementById('queue-count');
+        queueCountEl.innerText = " (Refilling buffer...)";
+        try {
+            const excludedIds = FINISHED_OBS_IDS.length > 0 ? `&not_id=${FINISHED_OBS_IDS.join(',')}` : '';
+            const filteredURL = `${API_URL}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
+            const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
+            const data = await response.json();
+            if (data.results?.length > 0) {
+                OBSERVATION_QUEUE = data.results;
+                showNextFromQueue();
+            } else {
+                queueCountEl.innerText = " (No more observations found)";
+            }
+        } catch (error) {
+            queueCountEl.innerText = " (Error loading data)";
+        }
+    }
+
+async function showNextFromQueue() {
+    if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
+    const obs = OBSERVATION_QUEUE.shift();
+    CURRENT_OBS_ID = obs.id;
+    document.getElementById('queue-count').innerText = `(${OBSERVATION_QUEUE.length} buffered)`;
+
+    let geoHierarchy = "Location Unknown";
+    let locationTerms = [];
+
+    if (obs.place_ids?.length > 0) {
+        try {
+            // Using the API to get the names of the places
+            const pRes = await fetch(`https://api.inaturalist.org/v1/places/${obs.place_ids.join(',')}`);
+            const pData = await pRes.json();
+            
+            // We want the names of countries (admin 0), states (10), and counties (20)
+            const places = pData.results.filter(p => [0, 10, 20].includes(p.admin_level));
+            locationTerms = places.map(p => p.name);
+            geoHierarchy = places.sort((a,b) => a.admin_level - b.admin_level).map(p => p.name).join(' » ');
+            
+        } catch (e) { console.error("Place fetch failed", e); }
+    }
+
+    autoSetRegionFromLocality(locationTerms);
+
+    renderObservations([obs], geoHierarchy);
+}
+
+
+
+function autoSetRegionFromLocality(terms) {
+    if (!terms || terms.length === 0) return;
+
+    // Look for a match in your regions.js data
+    // We check from most specific to most general (usually the order in the array)
+    const match = regions.find(r => 
+        terms.some(term => term.toLowerCase() === r.name.toLowerCase())
+    );
+
+    if (match) {
+        currentFilters.region = match.code;
+        if (!answerOrder.includes('region')) {
+            answerOrder.push('region');
+        }
+        // Update the UI to reflect the automatically selected region
+        updateUI();
+        console.log(`Auto-detected region: ${match.name}`);
+    }
+}
+
+
+    function renderObservations(observations, geoHierarchy) {
+        const grid = document.getElementById('observation-grid');
+        grid.innerHTML = observations.map(obs => {
+            const photos = obs.observation_photos || [];
+        const mainPhoto = photos[0]?.photo.url.replace("square", "large") || "";
+        const mainPhotoOrig = photos[0]?.photo.url.replace("square", "original") || "";
+
+        // Create the thumbnails HTML if there is more than 1 photo
+        const thumbnailsHtml = photos.length > 1 ? `
+            <div class="thumb-strip" style="display: flex; gap: 4px; padding: 5px; overflow-x: auto; background: #f0f0f0;">
+                ${photos.map((p, idx) => `
+                    <img src="${p.photo.url}" 
+                         style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; border: 2px solid ${idx === 0 ? '#2980b9' : 'transparent'};" 
+                         onclick="
+                            const card = this.closest('.card');
+                            const largeUrl = '${p.photo.url.replace("square", "large")}';
+                            const origUrl = '${p.photo.url.replace("square", "original")}';
+                            card.querySelector('.main-photo').src = largeUrl;
+                            card.querySelector('.main-photo').onclick = () => openZoom(origUrl);
+                            card.querySelector('.zoom-btn').onclick = () => openZoom(origUrl);
+                            this.parentElement.querySelectorAll('img').forEach(i => i.style.borderColor = 'transparent');
+                            this.style.borderColor = '#2980b9';
+                         ">
+                `).join('')}
+            </div>
+        ` : '';
+
+ 	// 1. Create a combined list of all Comments and all Identifications
+        const allDiscussion = [
+            ...(obs.identifications || []).map(i => ({ 
+                user: i.user.login, 
+                // If there's no body text, we show a default status message
+                body: i.body && i.body.trim() !== "" ? i.body : "added an identification.", 
+                taxonName: i.taxon?.preferred_common_name || i.taxon?.name,
+                type: 'id'
+            })),
+            ...(obs.comments || []).map(c => ({ 
+                user: c.user.login, 
+                body: c.body, 
+                type: 'comment' 
+            }))
+        ];
+            return `
+                <div class="card" data-id="${obs.id}">
+                    <div class="img-container" style="position:relative;">
+                        <img src="${mainPhoto}" class="main-photo" onclick="openZoom('${mainPhotoOrig}')" style="width:100%; display:block;">
+			${thumbnailsHtml}
+
+                        <button class="zoom-btn" onclick="openZoom('${mainPhotoOrig}')" style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:white; border:none; padding:8px; cursor:pointer; font-size:0.8rem;">🔍 Zoom</button>
+                    </div>
+
+          <div class="card-content-split">
+                    <div class="info">
+                        <a href="https://www.inaturalist.org/observations/${obs.id}" target="_blank" style="text-decoration:none; color:inherit;">
+                            <h2 style="margin:0; font-size:1.2rem;">${obs.taxon?.preferred_common_name || "Unknown"}</h2>
+                            <i style="color:#666; font-size:0.8rem;">${obs.taxon?.name || "Unknown"}</i>
+                        </a>
+                        <div class="geo-hierarchy"><span style="font-size:0.7em; font-weight:bold;">LOCALITY:</span><br>${geoHierarchy}</div>
+                    </div>
+                    <div class="btn-group">
+			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
+                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id})">AGREE & NEXT</button>
+                        <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
+                        <!--button not needed anymore -- <button class="btn-action" onclick="openIDModal()">ADD NEW ID</button>-->
+                        <button class="btn-skip" onclick="excludeAndNext(${obs.id})">SKIP</button>
+                    </div>
+      	 </div> 
+			<div class="comments-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.85rem; color: #444; max-height: 200px; overflow-y: auto;">
+                <strong style="font-size: 0.7rem; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px;">Activity & Discussion</strong>
+                ${allDiscussion.length > 0 
+                    ? allDiscussion.map(item => `
+                         <div class="comment-item" style="margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
+                            <strong>${item.user}</strong> 
+                            ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: ${item.taxonName}]</span>` : ''}: 
+                            <span style="${item.type === 'id' && item.body === 'added an identification.' ? 'font-style: italic; color: #888;' : ''}">
+                                ${item.body}
+                            </span>
+                         </div>
+                    `).join('') 
+                    : '<div style="color: #999; font-style: italic;">No activity yet.</div>'
+                }
+            </div>
+
+                </div>`;
+        }).join('');
+    }
+
+    async function sendIdentification(obsId, taxonId) {
+        try {
+            await fetch("https://api.inaturalist.org/v1/identifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+                body: JSON.stringify({ identification: { observation_id: obsId, taxon_id: taxonId, disagreement: true } })
+            });
+        } catch (e) { console.error("ID Failed", e); }
+    }
+
+async function setCommunityTaxonStatus() {
+    if (!CURRENT_OBS_ID || !MY_TOKEN) {
+        console.error("Missing Observation ID or Token");
+        return;
+    }
+
+    //storing constants before starting timer
+    const COMM_CURRENT = CURRENT_OBS_ID
+    await new Promise(resolve => setTimeout(resolve, 5000)); //this is necessary so that server can update the community ID by the time I request to vote No to improve possibility. Not relevant in practice until I get that working.
+
+    // this is supposed to set "Based on the evidence, can the Community Taxon be improved?"
+    // as "No, it's as good it can be"
+    // but I haven't found how to do it yet, so instead the API fetch just posts a comment.
+ 
+     const body = {
+        comment: {
+            body: "I believe this observation cannot be identified more finely than my ID based on the visible evidence. If you're logged in on the iNat site, I encourage you to mark \"Based on the evidence, can the Community Taxon still be confirmed or improved?\" as \"No, it's as good as it can be,\" which makes this stop being 'needs ID.' I'm not doing it now only because the iNaturalist API doesn't seem to support this feature.",
+            parent_id: COMM_CURRENT,
+            parent_type: "Observation"
+        }
+    };
+
+    try {
+        const res = await fetch("https://api.inaturalist.org/v1/comments", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+            body: JSON.stringify(body)
+        });
+
+        if (res.ok) console.log("Community Taxon status updated.");
+        else console.error("Failed to update status:", await res.json());
+    } catch (e) {
+        console.error("Network error:", e);
+    }
+       
+}
+
+async function postImmediateID() {
+    // 1. Calculate the matching taxa based on current filters
+    const filtered = flyData.filter(fly => {
+        return Object.keys(currentFilters).every(key => {
+            if (currentFilters[key] === null) return true;
+            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+            if (fly[key] === undefined) return true;
+            return fly[key] && fly[key].includes(currentFilters[key]);
+        });
+    });
+
+    // 2. Get the suggested taxon name
+    const common = getLowestCommonTaxon(filtered);
+
+    if (common && common.length > 0) {
+        const lowestName = common[common.length - 1];
+        const taxonInfo = taxa.find(t => t.name === lowestName);
+        
+        if (taxonInfo && taxonInfo.taxonId) {
+            // --- WHAT DO IF NOT A SPECIES LEVEL ID ---
+            if (taxonInfo.rank !== "species") {
+                console.log(`ID is at rank: ${taxonInfo.rank}. Sending cannot improve community ID...`);
+                setCommunityTaxonStatus();
+            }
+
+            // 3. Submit immediately to iNat
+            sendIdentification(CURRENT_OBS_ID, taxonInfo.taxonId);
+            console.log(`Successfully posted ID: ${lowestName}`);
+        } else {
+            alert("Could not find a Taxon ID for this match in taxa.js");
+        }
+    } else {
+        alert("No match found in the matrix to post!");
+    }
+
+	// 3. POST THE NARRATIVE COMMENT AT THE END
+            const narrativeText = document.getElementById('summary-content').innerHTML;
+            const placeholder = "Select traits to generate description.";
+            
+            if (narrativeText && narrativeText !== placeholder) {
+                try {
+                    fetch("https://api.inaturalist.org/v1/comments", {
+                        method: "POST",
+                        headers: { 
+                            "Content-Type": "application/json", 
+                            "Authorization": `Bearer ${MY_TOKEN}` 
+                        },
+                        body: JSON.stringify({ 
+                            comment: { 
+                                body: narrativeText, 
+                                parent_id: CURRENT_OBS_ID, 
+                                parent_type: "Observation" 
+                            } 
+                        })
+                    });
+                    console.log("Narrative comment posted.");
+                } catch (e) {
+                    console.error("Comment failed to post", e);
+                }
+            }
+	 excludeAndNext(CURRENT_OBS_ID);
+
+}
+
+
+    function excludeAndNext(obsId) {
+        if (!FINISHED_OBS_IDS.includes(obsId)) FINISHED_OBS_IDS.push(obsId);
+        resetMatrix();
+        showNextFromQueue();
+    }
+
+    function updateTokenManual() {
+        const input = document.getElementById('token-input');
+        let val = input.value.trim();
+        const match = val.match(/"([^"]{20,})"/);
+        if (match) val = match[1];
+        MY_TOKEN = val;
+        localStorage.setItem('inat_token', val);
+        OBSERVATION_QUEUE = [];
+        updateStatusUI().then(fetchObservations);
+        input.value = "";
+    }
+
+    /* --- MATRIX CORE LOGIC --- */
+    let currentFilters = { region: null }; 
+    let answerOrder = []; 
+    let skippedQuestions = []; 
+    let activeId = null;
+
+    function initMatrix() {
+        if (typeof traits !== 'undefined') traits.forEach(t => { currentFilters[t.id] = null; });
+        renderMenu();
+    }
+
+    function calculateShannonIndex(traitId, filteredFlies) {
+        if (filteredFlies.length === 0) return 0;
+        const counts = {};
+        let totalMatches = 0;
+        filteredFlies.forEach(fly => {
+            const flyOptions = (traitId === 'region') ? fly.distribution : fly[traitId];
+            if (flyOptions && Array.isArray(flyOptions)) {
+                flyOptions.forEach(opt => {
+                    counts[opt] = (counts[opt] || 0) + 1;
+                    totalMatches++;
+                });
+            }
+        });
+        if (totalMatches === 0) return 0;
+        let entropy = 0;
+        Object.values(counts).forEach(count => {
+            const p = count / totalMatches;
+            entropy -= p * Math.log(p);
+        });
+        return entropy.toFixed(3);
+    }
+
+    function renderMenu() {
+        const menu = document.getElementById('question-menu');
+        const currentMatches = flyData.filter(fly => {
+            return Object.keys(currentFilters).every(key => {
+                if (currentFilters[key] === null) return true;
+                if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+		if (fly[key] === undefined) return true;
+                return fly[key] && fly[key].includes(currentFilters[key]);
+            });
+        });
+
+        const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
+        const answered = allQuestions.filter(q => currentFilters[q.id] !== null || skippedQuestions.includes(q.id));
+        const unanswered = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id));
+
+        answered.sort((a, b) => answerOrder.indexOf(a.id) - answerOrder.indexOf(b.id));
+        const sortedUnanswered = unanswered.map(q => {
+            const hValue = parseFloat(calculateShannonIndex(q.id, currentMatches));
+            const score = hValue * (q.weight || 1);
+            const intensity = Math.min(score / 5, 1); 
+            return { ...q, score, bgColor: `hsl(30, ${intensity * 100}%, ${95 - (intensity * 25)}%)` };
+        }).sort((a, b) => b.score - a.score);
+
+        // 1. Check if we should show the "no more diagnostic questions" message
+        const allUnansweredAreZero = sortedUnanswered.length > 0 && sortedUnanswered.every(q => q.score <= 0);
+        let messageHtml = "";
+        if (allUnansweredAreZero) {
+            messageHtml = `<div style="padding: 10px; font-size: 0.75rem; color: #888; font-style: italic; border-left: 3px solid #ccc; margin: 5px 0; background: #f9f9f9;">
+                No more diagnostic traits available. Remaining questions are for confirmation only.
+            </div>`;
+        }
+
+        const finalOrder = [...answered.map(q => ({ ...q, bgColor: '#ffffff' })), ...sortedUnanswered];
+
+        menu.innerHTML = finalOrder.map((q, index) => {
+            const isAnswered = currentFilters[q.id] !== null;
+            const isFirstUnanswered = index === answered.length;
+            
+            // 2. Insert the message right before the first unanswered question if all scores are 0
+            let itemHtml = `
+                <div class="menu-item ${activeId === q.id ? 'active' : ''}" 
+                     style="background-color: ${activeId === q.id ? '' : q.bgColor};" 
+                     onclick="selectQuestion('${q.id}')">
+                    <span>${q.title}</span>
+                    ${isAnswered ? '✓' : ''}
+                </div>`;
+                
+            return (isFirstUnanswered ? messageHtml : "") + itemHtml;
+        }).join('');
+    }
+
+    function selectQuestion(id) {
+        activeId = id;
+        renderMenu();
+        const area = document.getElementById('active-question-area');
+        if (id === 'region') {
+            const currentRegionObj = regions.find(r => r.code === currentFilters.region);
+            area.innerHTML = `
+                <h4>Select Region</h4>
+                <div style="display: flex; gap: 5px; margin-bottom:10px;">
+                    <input list="regions-list" placeholder="Type region..." 
+                           value="${currentRegionObj ? currentRegionObj.name : ''}" oninput="handleRegionChange(this.value)" style="flex:1; padding:8px;">
+                </div>
+                <datalist id="regions-list">${regions.map(r => `<option value="${r.name}">${r.code}</option>`).join('')}</datalist>
+                <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('region')">Skip</button>
+            `;
+        } else {
+            const trait = traits.find(t => t.id === id);
+            area.innerHTML = `
+                <h4>${trait.title}</h4>
+                ${trait.options.map(opt => `
+                    <button class="option ${currentFilters[id] === opt.label ? 'active' : ''}" 
+                            onclick="handleTraitSelection('${id}', '${opt.label}')">${opt.label}</button>
+                `).join('')}
+                <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('${id}')">Skip</button>
+            `;
+        }
+    }
+
+    function handleRegionChange(val) {
+        const foundRegion = regions.find(r => r.name.toUpperCase() === val.trim().toUpperCase() || r.code.toUpperCase() === val.trim().toUpperCase());
+        if (foundRegion) {
+            currentFilters.region = foundRegion.code; 
+            if (!answerOrder.includes('region')) answerOrder.push('region');
+            skippedQuestions = skippedQuestions.filter(sid => sid !== 'region');
+        } else { currentFilters.region = null; }
+        updateUI();
+    }
+
+    function handleTraitSelection(traitId, value) {
+        if (currentFilters[traitId] === value) {
+            currentFilters[traitId] = null;
+            answerOrder = answerOrder.filter(id => id !== traitId);
+        } else {
+            currentFilters[traitId] = value;
+            skippedQuestions = skippedQuestions.filter(sid => sid !== traitId);
+            if (!answerOrder.includes(traitId)) answerOrder.push(traitId);
+        }
+        selectQuestion(traitId);
+        updateUI();
+    }
+
+    function skipQuestion(id) {
+        if (!answerOrder.includes(id)) answerOrder.push(id);
+        if (!skippedQuestions.includes(id)) skippedQuestions.push(id);
+        currentFilters[id] = null;
+        if (activeId === id) selectQuestion(id); 
+        updateUI();
+    }
+
+    function updateUI() {
+        const filtered = flyData.filter(fly => {
+            return Object.keys(currentFilters).every(key => {
+                if (currentFilters[key] === null) return true;
+                if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+		if (fly[key] === undefined) return true;
+                return fly[key] && fly[key].includes(currentFilters[key]);
+            });
+        });
+
+        const breadcrumbArea = document.getElementById('taxonomic-breadcrumb');
+        const commonTaxa = getLowestCommonTaxon(filtered);
+        
+        // 1. Taxonomic Breadcrumb (from index.html)
+        if (commonTaxa && commonTaxa.length > 0) {
+            breadcrumbArea.innerHTML = `
+                <div class="breadcrumb-container">
+                    ${commonTaxa.map((taxonName, index) => {
+                                // Find the taxon object in your database to get the ID
+                                const taxonData = taxa.find(t => t.name === taxonName);
+                                const url = taxonData ? `https://www.inaturalist.org/taxa/${taxonData.taxonId}` : '#';
+                                const isActive = index === commonTaxa.length - 1 ? 'breadcrumb-active' : '';
+                
+                                return `
+                                    <span class="breadcrumb-item ${isActive}">
+                                        » <a href="${url}" target="_blank" style="color: inherit; text-decoration: none;">${taxonName}</a>
+                                    </span>
+                                `;
+                            }).join('')}
+                </div>
+            `;
+        } else {
+            breadcrumbArea.innerHTML = '';
+        }
+
+        // 2. Results List (from index.html)
+        const resultsList = document.getElementById('results-list');
+        if (filtered.length === 0) {
+            resultsList.innerHTML = "<div style='color: #ff7675;'>No matches.</div>";
+        } else {
+            resultsList.innerHTML = filtered.map(f => `
+                <div style="margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px;">
+                 • <i>${f.species}</i> ${f.m_or_f ? `(${f.m_or_f})` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 3. Narrative logic (from index.html)
+        let narrative = [];
+        if (currentFilters.region) {
+            const regionName = regions.find(r => r.code === currentFilters.region)?.name || currentFilters.region;
+            narrative.push(`The record was observed in <strong>${regionName}</strong>.`);
+        }
+
+        Object.keys(currentFilters).forEach(key => {
+            if (key !== 'region' && currentFilters[key]) {
+                const trait = traits.find(t => t.id === key);
+                if (trait) {
+                    const selectedOption = trait.options.find(opt => opt.label === currentFilters[key]);
+                    if (selectedOption && selectedOption.description) narrative.push(selectedOption.description);
+                }
+            }
+        });
+        
+        const summaryBox = document.getElementById('summary-content');
+        if (narrative.length > 0) {
+            if (filtered.length === 0) {
+                narrative.push("<br><br><strong>No matching species found.</strong>");
+            } else {
+                const uniqueSexes = [...new Set(filtered.map(f => f.m_or_f).filter(Boolean))];
+                const sexPrefix = uniqueSexes.length === 1 ? `${uniqueSexes[0]} ` : "";
+                
+                let lowestTaxonDisplay = "Unknown";
+                if (commonTaxa && commonTaxa.length > 0) {
+                    const currentIndex = commonTaxa.length - 1;
+                    const rawLowest = commonTaxa[currentIndex];
+                    lowestTaxonDisplay = rawLowest;
+
+                    const sampleTaxonomy = filtered[0].taxonomy;
+                    const nextLevel = sampleTaxonomy[currentIndex + 1];
+
+                    if (!rawLowest.includes(" ") && nextLevel && nextLevel.includes(" ")) {
+                        lowestTaxonDisplay = `<i>${rawLowest}</i>`;
+                    }
+                }
+
+                let resultText = "";
+                if (filtered.length === 1) {
+                    resultText = `${sexPrefix ? 'a ' + sexPrefix : ''}<i>${filtered[0].species}</i>.`;
+                } else {
+                    const speciesList = [...new Set(filtered.map(f => f.species))];
+                    const speciesFormatted = speciesList.map(s => `<i>${s}</i>`).reduce((acc, curr, i) => {
+                        return acc + (i === 0 ? "" : i === speciesList.length - 1 ? " or " : ", ") + curr;
+                    }, "");
+                    
+
+                    if (speciesList.length === 1 && lowestTaxonDisplay.includes(speciesList[0])) {
+                            resultText = `${sexPrefix ? 'a ' + sexPrefix : ''}<i>${filtered[0].species}</i>.`;
+                        } else {
+                            resultText = `a member of the group ${lowestTaxonDisplay}, specifically ${sexPrefix ? `a ${sexPrefix}` : ''}${speciesFormatted}.`;
+                        }
+                        
+                }
+                narrative.push(`<br><br>Therefore, we can narrow this down to ${resultText}`);
+            }
+            narrative.push(`<br><br>See  notes and illustrations at <a href="https://sites.google.com/view/flyguide/species-guides/calliphoridae">https://sites.google.com/view/flyguide/species-guides/calliphoridae</a>.`);
+            summaryBox.innerHTML = narrative.join(" ");
+        } else {
+            summaryBox.innerHTML = "Select traits to generate description.";
+        }
+        renderMenu();
+    }
+
+    function getLowestCommonTaxon(filteredResults) {
+        if (filteredResults.length === 0) return null;
+        let common = [...filteredResults[0].taxonomy];
+        filteredResults.forEach(fly => {
+            for (let i = 0; i < common.length; i++) {
+                if (fly.taxonomy[i] !== common[i]) { common = common.slice(0, i); break; }
+            }
+        });
+        return common;
+    }
+
+    function resetMatrix() {
+        currentFilters = { region: null };
+        traits.forEach(t => { currentFilters[t.id] = null; });
+        answerOrder = []; skippedQuestions = []; activeId = null;
+        document.getElementById('active-question-area').innerHTML = '<div style="color:#999; text-align:center; padding-top:50px;">Select a trait to begin.</div>';
+        updateUI();
+    }
+
+    window.onload = () => {
+        initMatrix();
+        updateStatusUI().then(() => { if (MY_TOKEN) fetchObservations(); });
+    };
+</script>
+
+<div class="about-section">
+    <h3>About this Tool</h3>
+    <p>
+        Built by Even Dankowicz, this workspace is designed to streamline the identification of <i>Lucilia</i> flies 
+        by combining a character-based matrix with the iNaturalist verification queue. 
+        Select traits from the menu to filter matching species and generate a diagnostic narrative.
+	<p>For identification with specimens under a microscope, Jones et al. (2019) is the best 
+	resource I can recommend--just be aware that species in the <i>bufonivora</i>complex 
+	somewhat frequently have odd numbers of post-sutural acrostichal setae, as cited in my notes at https://sites.google.com/view/flyguide/species-guides/calliphoridae/lucilia-of-usa-and-canada.
+	<p>I am far from an expert, but I've been working on this dataset over many years
+	of field observations, specimen work, and review of photos on BugGuide and iNaturalist.
+	A lot of the trait and distribution records were initially derived from the following references:
+	<p>
+	<br>Falk, 2016. British Blowflies (Calliphoridae) and Woodlouse Flies (Rhinophoridae). Draft Key March 2016. https://quelestcetanimal-lagalerie.com/wp-content/uploads/2017/01/testkeytobritishblowflies132016.pdf 
+	<p>Hall, Townsend, 1977. The Blow Flies of Virginia (Diptera: Calliphoridae). Virginia Tech Research Division Bulletin 123.
+	<p>Jones, Whitworth, Marshall, 2019. Blow flies of North America: Keys to the subfamilies and genera of Calliphoridae, and to the species of the subfamilies Calliphorinae, Luciliinae and Chrysomyinae. Canadian Journal of Arthropod Identification. 39. https://cjai.biologicalsurvey.ca/jwm_39/jwm_39.html 
+	<p>Marshall, Whitworth, Roscoe, 2011. Blow flies (Diptera: Calliphoridae) of eastern Canada with a key to Calliphoridae subfamilies and genera of eastern North America, and a key to the eastern Canadian species of Calliphorinae, Luciliinae and Chrysomyiinae. Canadian Journal of Arthropod Identification. 11.
+	<p>Tantawi, Whitworth, 2014. First record of Lucilia bufonivora Moniez, 1876 (Diptera: Calliphoridae) from North America and key to North American species of the L. bufonivora species group. Zootaxa. 3881(2): 101-124
+	<p>Whitworth, 2006. Keys to the Genera and Species of Blow Flies (Diptera: Calliphoridae) of North America north of Mexico. Proceedings of the Entomological Society of Washington. 108(3): 689-725.
+	<p>Whitworth, 2010. Keys to the genera and species of blow flies (Diptera: Calliphoridae) of the WestIndies and description of a new species of Lucilia Robineau-Desvoidy. Zootaxa.
+	<p>Whitworth, 2014. A revision of the Neotropical species of Lucilia Robineau-Desvoidy (Diptera: Calliphoridae). Zootaxa.	<p>Williams, Villet, 2014. Morphological identification of Lucilia sericata, Lucilia cuprina and their hybrids (Diptera, Calliphoridae). ZooKeys 420. https://zookeys.pensoft.net/article/3908/
+
+    </p>
+</div>
+
+
+</body>
+</html>

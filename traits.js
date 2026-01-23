@@ -1,0 +1,600 @@
+// Trait definitions
+// note that weight is straightforwardness from 10 to 10. e.g. region is weight 10.
+const traits = [
+        {
+        id: 'Headlength',
+        title: 'How long is head? (difficult to assess; character taken from Whitworth 2006)',
+        weight: 2,
+        options: [
+            { 
+                label: 'Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 
+                description: 'Head shorter; length of head at level of lunule less than half head height (Whitworth 2006).' 
+            },
+            { 
+                label: 'Head longer; length of head at level of lunule more than half head height (Whitworth 2006)', 
+                description: 'Head longer; length of head at level of lunule more than half head height (Whitworth 2006).' 
+            }
+]
+},
+    {
+        id: 'Fronsnarrowing',
+        title: 'Does the frons narrow between the vertex and the antennal bases?',
+        weight: 9,
+        options: [
+            { 
+                label: 'conspicuously narrowed above antennal bases (and either the frons width is no more than about 15% of the head width at narrowest point, or this is male L cuprina or L magnicornis)', 
+                description: 'The frons is conspicuously narrowed above antennal bases (and either the frons width is no more than about 15% of the head width at narrowest point, or this is male L cuprina or L magnicornis).' 
+            },
+            { 
+                label: 'more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point', 
+                description: 'The frons is more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point.' 
+            }
+]
+},
+    {
+        id: 'FronswidthatnarrowesttohelpIDmales',
+        title: 'Frons more than 7% of head?',
+        weight: 5,
+        options: [
+            { 
+                label: 'at least 7% of the head width', 
+                description: 'The frons at narrowest is at least 7% of the head width.' 
+            },
+            { 
+                label: 'less than 7% of head width', 
+                description: 'The frons at narrowest is less than 7% of head width.' 
+            }
+]
+},
+    {
+        id: 'FronswidthatnarrowesttohelpIDfemales',
+        title: 'Frons more than 35% of head width?',
+        weight: 3,
+        options: [
+            { 
+                label: 'less than 35% head width', 
+                description: 'The frons at narrowest is less than 35% head width.' 
+            },
+            { 
+                label: 'at least 35% of head width', 
+                description: 'The frons at narrowest is at least 35% of head width.' 
+            }
+]
+},
+    {
+        id: 'Frontoorbitalplatesformaleswithnarrowfrons',
+        title: 'How widely separated are fronto-orbital plates?',
+        weight: 5,
+        options: [
+            { 
+                label: 'strongly separated. See figures in Jones et al. 2019, p.174, 180', 
+                description: 'The fronto-orbital plates are strongly separated. See figures in Jones et al. 2019, p.174, 180.' 
+            },
+            { 
+                label: 'almost touching. See figures in Jones et al. 2019, p.167, 174, 180', 
+                description: 'The fronto-orbital plates are almost touching. See figures in Jones et al. 2019, p.167, 174, 180.' 
+            },
+            { 
+                label: 'somewhat separated. See figures in Jones et al. 2019, p.167', 
+                description: 'The fronto-orbital plates are somewhat separated. See figures in Jones et al. 2019, p.167.' 
+            }
+]
+},
+    {
+        id: 'Fronswidthatnarrowestformales',
+        title: 'Round or estimate frons width at narrowest',
+        weight: 3,
+        options: [
+            { 
+                label: 'about 20% head width', 
+                description: 'The frons at narrowest is about 20% head width.' 
+            },
+            { 
+                label: 'at least 30% head width', 
+                description: 'The frons at narrowest is at least 30% head width.' 
+            },
+            { 
+                label: 'about 13% head width', 
+                description: 'The frons at narrowest is about 13% head width.' 
+            },
+            { 
+                label: 'about 8% head width', 
+                description: 'The frons at narrowest is about 8% head width.' 
+            },
+            { 
+                label: 'about 5% head width', 
+                description: 'The frons at narrowest is about 5% head width.' 
+            },
+            { 
+                label: 'about 1% head width', 
+                description: 'The frons at narrowest is about 1% head width.' 
+            },
+            { 
+                label: 'about 3% head width', 
+                description: 'The frons at narrowest is about 3% head width.' 
+            }
+]
+},
+    {
+        id: 'fronswidthvscuprinamale',
+        title: 'Frons more than 15% of head width?',
+        weight: 5,
+        options: [
+            { 
+                label: 'at least about 20% head width', 
+                description: 'The frons at narrowest is at least about 20% head width.' 
+            },
+            { 
+                label: 'at most about 15% head width', 
+                description: 'The frons at narrowest is at most about 15% head width.' 
+            }
+]
+},
+    {
+        id: 'Ocellartriangle',
+        title: 'Ocellar triangle size (see p141 in Jones et al. 2019).',
+        weight: 2,
+        options: [
+            { 
+                label: 'relatively small, with basal swelling extending less than halfway to lunule', 
+                description: 'The ocellar triangle is relatively small, with basal swelling extending less than halfway to lunule.' 
+            },
+            { 
+                label: 'large, with base extending more than halfway to lunule', 
+                description: 'The ocellar triangle is large, with base extending more than halfway to lunule.' 
+            }
+]
+},
+    {
+        id: 'IVSorientation',
+        title: 'Do inner vertical setae converge?',
+        weight: 2,
+        options: [
+            { 
+                label: 'nearly parallel in dorsal view', 
+                description: 'Inner vertical setae are nearly parallel in dorsal view.' 
+            },
+            { 
+                label: 'convergent in dorsal view', 
+                description: 'Inner vertical setae are convergent in dorsal view.' 
+            }
+]
+},
+    {
+        id: 'Parafacialwidthatleveloflunule',
+        title: 'Parafacial width at level of lunule.',
+        weight: 4,
+        options: [
+            { 
+                label: 'broader than the width of the first flagellomere', 
+                description: 'The parafacial width at the level of the lunule is broader than the width of the first flagellomere.' 
+            },
+            { 
+                label: 'narrower than the width of the first flagellomere', 
+                description: 'The parafacial width at the level of the lunule is narrower than the width of the first flagellomere.' 
+            }
+]
+},
+    {
+        id: 'Parafacialcolor',
+        title: 'Parafacial color? (figure on p.167 of Jones et al 2019)',
+        weight: 1,
+        options: [
+            { 
+                label: 'bright silvery (Whitworth 2014)', 
+                description: 'Parafacials are bright silvery (Whitworth 2014).' 
+            },
+            { 
+                label: 'orange (Whitworth 2014)', 
+                description: 'Parafacials are orange (Whitworth 2014).' 
+            },
+            { 
+                label: 'dark silvery (Whitworth 2014)', 
+                description: 'Parafacials are dark silvery (Whitworth 2014).' 
+            }
+]
+},
+    {
+        id: 'Genae',
+        title: 'Genae (be careful not to confuse genae with postgenae).',
+        weight: 1,
+        options: [
+            { 
+                label: 'with dark setae only', 
+                description: 'Genae with dark setae only.' 
+            },
+            { 
+                label: 'posterior third with many pale setae', 
+                description: 'Genae posterior third with many pale setae.' 
+            }
+]
+},
+    {
+        id: 'Genaldilation',
+        title: 'Genal dilation (figure on p.167 of Jones et al 2019).',
+        weight: 1,
+        options: [
+            { 
+                label: 'greyish-white (with dark setae)', 
+                description: 'Genal dilation greyish-white (with dark setae).' 
+            },
+            { 
+                label: 'orangeish-white (with lighter brown setae)', 
+                description: 'Genal dilation orangeish-white (with lighter brown setae).' 
+            }
+]
+},
+    {
+        id: 'Angleformedbyverticalsetae',
+        title: 'What angle do the three vertical setae form?',
+        weight: 1,
+        options: [
+            { 
+                label: 'a right angle', 
+                description: 'The three vertical setae form a right angle.' 
+            },
+            { 
+                label: 'an obtuse angle', 
+                description: 'The three vertical setae form an obtuse angle.' 
+            }
+]
+},
+    {
+        id: 'Occipitalsetae',
+        title: 'Setae below and behind postocular setae (see figures of mexicana and eximia, e.g. in Jones et al. 2019).',
+        weight: 1,
+        options: [
+            { 
+                label: 'stout and black', 
+                description: 'Setae below and behind postocular setae (Whitworth 2014) are stout and black.' 
+            },
+            { 
+                label: 'pale and weak', 
+                description: 'Setae below and behind postocular setae (Whitworth 2014) are pale and weak.' 
+            }
+]
+},
+    {
+        id: 'Occipitalsetaebehindinnerverticalseta',
+        title: 'Occipital setae behind inner vertical seta (see figures in Jones et al. 2019)',
+        weight: 1,
+        options: [
+            { 
+                label: 'a single seta.', 
+                description: 'The number of occipital setae behind the inner vertical seta (see figures, e.g. in Jones et al. 2019) is a single seta..' 
+            },
+            { 
+                label: 'two to five setae', 
+                description: 'The number of occipital setae behind the inner vertical seta (see figures, e.g. in Jones et al. 2019) is two to five setae.' 
+            }
+]
+},
+    {
+        id: 'stflagellomerelengthrelativetoeyelength',
+        title: 'How long is the first flagellomere relative to the height of the eye?',
+        weight: 2,
+        options: [
+            { 
+                label: 'in length, less than half of the height of eye in lateral view', 
+                description: 'The first flagellomere is in length, less than half of the height of eye in lateral view.' 
+            },
+            { 
+                label: 'in length, more than half of the height of eye in lateral view', 
+                description: 'The first flagellomere is in length, more than half of the height of eye in lateral view.' 
+            }
+]
+},
+    {
+        id: 'Palpscolor',
+        title: 'Palps color.',
+        weight: 3,
+        options: [
+            { 
+                label: 'at least partially dark brown to black', 
+                description: 'The palps are at least partially dark brown to black.' 
+            },
+            { 
+                label: 'entirely yellow-orange', 
+                description: 'The palps are entirely yellow-orange.' 
+            }
+]
+},
+    {
+        id: 'Bodycolor',
+        title: 'Color of thorax or abdomen? (unreliable for dead flies)',
+        weight: 2,
+        options: [
+            { 
+                label: 'coppery brown', 
+                description: 'Thorax and abdomen are coppery brown.' 
+            },
+            { 
+                label: 'reddish-orange brown', 
+                description: 'Thorax and abdomen are reddish-orange brown.' 
+            },
+            { 
+                label: 'orangish green', 
+                description: 'Thorax and abdomen are orangish green.' 
+            },
+            { 
+                label: 'yellowish green', 
+                description: 'Thorax and abdomen are yellowish green.' 
+            },
+            { 
+                label: 'emerald green', 
+                description: 'Thorax and abdomen are emerald green.' 
+            },
+            { 
+                label: 'bluish', 
+                description: 'Thorax and abdomen are bluish.' 
+            },
+            { 
+                label: 'shining black', 
+                description: 'Thorax and abdomen are shining black.' 
+            }
+]
+},
+    {
+        id: 'presuturalacrostichalsetaeposteriorpairfirst',
+        title: 'Posterior presutural acrostichal setae separation',
+        weight: 2,
+        options: [
+            { 
+                label: 'the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 
+                description: 'the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae.' 
+            },
+            { 
+                label: 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae', 
+                description: 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae.' 
+            }
+]
+},
+    {
+        id: 'presuturalacrostichalsetaeposteriorpairsecond',
+        title: 'Posterior presutural acrostichal-dorsocentral setae separation',
+        weight: 1,
+        options: [
+            { 
+                label: 'the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 
+                description: 'the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance.' 
+            },
+            { 
+                label: 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance', 
+                description: 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance.' 
+            }
+]
+},
+    {
+        id: 'Setulaeonposteriorpostpronotum',
+        title: 'Setae on posterior postpronotum (see figures, e.g. in Jones et al. 2019)',
+        weight: 1,
+        options: [
+            { 
+                label: 'small and number 2-3', 
+                description: 'The setulae on the posterior half of the postpronotum are small and number 2-3.' 
+            },
+            { 
+                label: 'larger and number 6-8', 
+                description: 'The setulae on the posterior half of the postpronotum are larger and number 6-8.' 
+            }
+]
+},
+    {
+        id: 'Setulaeonposteriornotopleuron',
+        title: 'Setulae on posterior notopleuron (see figures, e.g. in Jones et al. 2019)',
+        weight: 1,
+        options: [
+            { 
+                label: 'small and number 2-3', 
+                description: 'The setulae on the posterior margin of the notopleuron are small and number 2-3.' 
+            },
+            { 
+                label: 'larger and number 6-8', 
+                description: 'The setulae on the posterior margin of the notopleuron are larger and number 6-8.' 
+            }
+]
+},
+    {
+        id: 'acrostichalspostsutural',
+        title: '# of post-sutural acrostichal pairs.',
+        weight: 6,
+        options: [
+            { 
+                label: 'three', 
+                description: 'The number of pairs of post-sutural acrostichal setae is three.' 
+            },
+            { 
+                label: 'two', 
+                description: 'The number of pairs of post-sutural acrostichal setae is two.' 
+            }
+]
+},
+    {
+        id: 'intraalarsetaepresutural',
+        title: 'Is a pre-sutural intra-alar seta present?',
+        weight: 1,
+        options: [
+            { 
+                label: 'not present', 
+                description: 'A pre-sutural intra-alar seta is not present.' 
+            },
+            { 
+                label: 'present', 
+                description: 'A pre-sutural intra-alar seta is present.' 
+            }
+]
+},
+    {
+        id: 'intraalarsetaePostsutural',
+        title: '# of postsutural intra-alar setae',
+        weight: 1,
+        options: [
+            { 
+                label: 'three', 
+                description: 'The number of pairs of post-sutural intra-alar setae is three.' 
+            },
+            { 
+                label: 'two', 
+                description: 'The number of pairs of post-sutural intra-alar setae is two.' 
+            }
+]
+},
+    {
+        id: 'Subcostalscleritesetae',
+        title: 'Does the subcostal sclerite (ventral wing base) have setae?',
+        weight: 1,
+        options: [
+            { 
+                label: 'no setae', 
+                description: 'The subcostal sclerite has no setae.' 
+            },
+            { 
+                label: '1-5 black setae', 
+                description: 'The subcostal sclerite has 1-5 black setae.' 
+            }
+]
+},
+    {
+        id: 'Basicostacolor',
+        title: 'What color is the basicosta? (sometimes ambiguous, see notes)',
+        weight: 6,
+        options: [
+            { 
+                label: 'orange, yellow, or whitish', 
+                description: 'The basicosta is orange, yellow, or whitish.' 
+            },
+            { 
+                label: 'dark brown or black', 
+                description: 'The basicosta is dark brown or black.' 
+            },
+            { 
+                label: 'tan to orange-brown', 
+                description: 'The basicosta is tan to orange-brown.' 
+            }
+]
+},
+    {
+        id: 'Lowercalyptercolor',
+        title: 'What color is the lower calypter?',
+        weight: 1,
+        options: [
+            { 
+                label: 'pale, similar to upper calypter', 
+                description: 'The lower calypter is pale, similar to upper calypter.' 
+            },
+            { 
+                label: 'light brown, somewhat darker than upper calypter', 
+                description: 'The lower calypter is light brown, somewhat darker than upper calypter.' 
+            }
+]
+},
+    {
+        id: 'Abdominalpubescence',
+        title: 'Abdomen with mesal division in pubescence patterning?',
+        weight: 2,
+        options: [
+            { 
+                label: 'with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)', 
+                description: 'with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010).' 
+            },
+            { 
+                label: 'without mesal division in abdominal pubescence', 
+                description: 'without mesal division in abdominal pubescence.' 
+            }
+]
+},
+    {
+        id: 'Tsetae',
+        title: 'Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)?',
+        weight: 2,
+        options: [
+            { 
+                label: 'without especially strong or erect median marginal setae (Whitworth 2006)', 
+                description: 'The posterior margin of tergite 3 without especially strong or erect median marginal setae (Whitworth 2006).' 
+            },
+            { 
+                label: 'with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)', 
+                description: 'The posterior margin of tergite 3 with 1-2 pairs of long, erect median marginal setae (Whitworth 2006).' 
+            }
+]
+},
+    {
+        id: 'Malecercusinlateralview',
+        title: 'Male cercus, in lateral view',
+        weight: 1,
+        options: [
+            { 
+                label: 'with apical hook', 
+                description: 'Male cercus, in lateral view, with apical hook.' 
+            },
+            { 
+                label: 'without apical hook', 
+                description: 'Male cercus, in lateral view, without apical hook.' 
+            }
+]
+},
+    {
+        id: 'Femaleovipositorinventralview',
+        title: 'Female ovipositor, in ventral view',
+        weight: 1,
+        options: [
+            { 
+                label: 'with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided', 
+                description: 'Female ovipositor, in ventral view, with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided.' 
+            },
+            { 
+                label: 'with ST7 and ST8 gradually widened posteriorly', 
+                description: 'Female ovipositor, in ventral view, with ST7 and ST8 gradually widened posteriorly.' 
+            },
+            { 
+                label: 'with ST7 and ST8 widened posteriorly after a sudden subapical constriction', 
+                description: 'Female ovipositor, in ventral view, with ST7 and ST8 widened posteriorly after a sudden subapical constriction.' 
+            }
+]
+},
+    {
+        id: 'Malesurstylus',
+        title: 'Male surstylus',
+        weight: 1,
+        options: [
+            { 
+                label: 'bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)', 
+                description: 'bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014).' 
+            },
+            { 
+                label: 'elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)', 
+                description: 'elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014).' 
+            }
+]
+},
+    {
+        id: 'Maleterminalia',
+        title: 'Male cerci',
+        weight: 1,
+        options: [
+            { 
+                label: 'posteriorly divergent; see Jones et al. 2019', 
+                description: 'Male cerci posteriorly divergent; see Jones et al. 2019.' 
+            },
+            { 
+                label: 'posteriorly parallel; see Jones et al. 2019', 
+                description: 'Male cerci posteriorly parallel; see Jones et al. 2019.' 
+            }
+]
+},
+    {
+        id: 'Morphometricsbufonivoraelongata',
+        title: 'Morphometrics: antenna size bufonivora-elongata',
+        weight: 1,
+        options: [
+            { 
+                label: 'bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019', 
+                description: 'bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019.' 
+            },
+            { 
+                label: 'elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019', 
+                description: 'elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019.' 
+            }
+]
+}
+];
