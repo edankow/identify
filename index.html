@@ -20,6 +20,11 @@
             <strong>Matrix Suggestion:</strong> <span id="suggestion-text"></span>
         </div>
 
+<div style="position:relative; margin-bottom: 15px;">
+            <input type="text" id="taxon-search-input" placeholder="Start typing taxon name (e.g. Lucilia)..." oninput="searchTaxa(this.value)" autocomplete="off">
+            <div id="search-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+        </div>
+
         <input type="number" id="manual-taxon-id" placeholder="Enter Taxon ID Number...">
         <div style="display:flex; gap:10px;">
             <button onclick="submitManualID()" class="btn-id" style="flex:1; padding:10px; border:none; border-radius:4px;">Submit</button>
@@ -91,7 +96,7 @@
 
 <script src="regions.js"></script>
 <script src="traits.js"></script>
-<script src="flydata.js"></script>
+<script src="flyData.js"></script>
 <script src="taxa.js"></script>
 
 <script>
@@ -165,6 +170,9 @@ if (common && common.length > 0) {
     function closeModals() { 
         document.getElementById('modal-id').style.display = 'none'; 
         document.getElementById('modal-comment').style.display = 'none'; 
+     document.getElementById('taxon-search-input').value = '';
+    document.getElementById('search-results-dropdown').style.display = 'none';
+    document.getElementById('manual-taxon-id').value = '';
     }
 
 
@@ -414,9 +422,9 @@ function autoSetRegionFromLocality(terms) {
                     <div class="btn-group">
 			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
                         <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id})">AGREE & NEXT</button>
-                        <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
-                        <!--button not needed anymore -- <button class="btn-action" onclick="openIDModal()">ADD NEW ID</button>-->
+			<button class="btn-action" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
                         <button class="btn-skip" onclick="excludeAndNext(${obs.id})">SKIP</button>
+                        <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
                     </div>
       	 </div> 
 			<div class="comments-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.85rem; color: #444; max-height: 200px; overflow-y: auto;">
@@ -848,6 +856,49 @@ async function postImmediateID() {
         initMatrix();
         updateStatusUI().then(() => { if (MY_TOKEN) fetchObservations(); });
     };
+
+
+let searchTimeout = null;
+
+async function searchTaxa(query) {
+    const dropdown = document.getElementById('search-results-dropdown');
+    
+    // Don't search for very short strings
+    if (query.length < 3) {
+        dropdown.style.display = 'none';
+        return;
+    }
+
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            if (data.results.length > 0) {
+                dropdown.innerHTML = data.results.map(t => `
+                    <div class="search-result-item" 
+                         style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 0.9rem;"
+                         onclick="selectTaxon('${t.id}', '${t.name}')">
+                        <strong>${t.name}</strong> <small>(${t.preferred_common_name || ''})</small>
+                    </div>
+                `).join('');
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        } catch (e) {
+            console.error("Taxon search failed", e);
+        }
+    }, 300); // 300ms delay to wait for user to stop typing
+}
+
+function selectTaxon(id, name) {
+    document.getElementById('manual-taxon-id').value = id;
+    document.getElementById('taxon-search-input').value = name;
+    document.getElementById('search-results-dropdown').style.display = 'none';
+}
+
 </script>
 
 <div class="about-section">
@@ -877,5 +928,4 @@ async function postImmediateID() {
 
 
 </body>
-
 </html>
