@@ -456,7 +456,7 @@ function autoSetRegionFromLocality(terms) {
                     </div>
                     <div class="btn-group">
 			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
-                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id})">AGREE & NEXT</button>
+                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id}); excludeAndNext(${obs.id});">AGREE & NEXT</button>
 			<button class="btn-action" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
                         <button class="btn-skip" onclick="excludeAndNext(${obs.id})">SKIP</button>
                         <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
