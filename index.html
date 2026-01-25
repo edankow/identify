@@ -8,10 +8,6 @@
 </head>
 <body>
 
-<div id="zoom-overlay" onclick="closeZoom()">
-    <img id="zoomed-image" src="">
-</div>
-
 <div id="modal-location" class="modal">
     <div class="modal-content">
         <h3>Change Search Location</h3>
@@ -131,26 +127,58 @@
     let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
     let API_BASE = "https://api.inaturalist.org/v1/observations?per_page=50&taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id";
 
-    /* --- ZOOM LOGIC --- */
-    function openZoom(url) {
-        const overlay = document.getElementById('zoom-overlay');
-        const img = document.getElementById('zoomed-image');
-        img.src = url; 
-        overlay.style.display = 'block';
-        window.addEventListener('mousemove', handleZoomMove);
+let isPinned = false; 
+
+function handleZoom(e) {
+    const container = e.currentTarget;
+    const img = container.querySelector('.main-photo');
+    
+    // Read current state from the element's dataset
+    let zoomState = container.dataset.zoomState || 'none'; // 'none', 'active', or 'pinned'
+
+    if (e.type === 'click') {
+        if (zoomState === 'none') {
+            // First click: Zoom in and start following mouse
+            zoomState = 'active';
+            container.classList.add('zoomed-active');
+            container.classList.remove('zoomed-pinned');
+        } else if (zoomState === 'active') {
+            // Second click: Freeze (Pin) in place
+            zoomState = 'pinned';
+            container.classList.add('zoomed-pinned');
+        } else {
+            // Third click: Reset to normal
+            zoomState = 'none';
+            container.classList.remove('zoomed-active', 'zoomed-pinned');
+            img.style.transformOrigin = `center center`;
+        }
+        container.dataset.zoomState = zoomState;
     }
 
-    function closeZoom() {
-        document.getElementById('zoom-overlay').style.display = 'none';
-        window.removeEventListener('mousemove', handleZoomMove);
-    }
-
-    function handleZoomMove(e) {
-        const img = document.getElementById('zoomed-image');
-        const x = (e.clientX / window.innerWidth) * 100;
-        const y = (e.clientY / window.innerHeight) * 100;
+    // Follow mouse only if state is 'active' (not pinned or none)
+    if (zoomState === 'active' && (e.type === 'mousemove' || e.type === 'click')) {
+        const rect = container.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / container.offsetWidth) * 100;
+        const y = ((e.clientY - rect.top) / container.offsetHeight) * 100;
         img.style.transformOrigin = `${x}% ${y}%`;
     }
+}
+
+function handleDblClick(event) {
+    if (!isZoomedIn) return;
+    isPinned = !isPinned;
+    event.currentTarget.classList.toggle('pinned', isPinned);
+    
+    // Reset translation when pinning starts
+    if (isPinned) {
+        translateX = 0; translateY = 0;
+    }
+}
+
+// Add these to handle the "Grab" feel
+function startDrag(e) { if(isPinned) isDragging = true; }
+function stopDrag(e) { isDragging = false; }
+
 
     /* --- MODAL LOGIC --- */
 function openIDModal() { 
@@ -410,8 +438,6 @@ function autoSetRegionFromLocality(terms) {
                             const largeUrl = '${p.photo.url.replace("square", "large")}';
                             const origUrl = '${p.photo.url.replace("square", "original")}';
                             card.querySelector('.main-photo').src = largeUrl;
-                            card.querySelector('.main-photo').onclick = () => openZoom(origUrl);
-                            card.querySelector('.zoom-btn').onclick = () => openZoom(origUrl);
                             this.parentElement.querySelectorAll('img').forEach(i => i.style.borderColor = 'transparent');
                             this.style.borderColor = '#2980b9';
                          ">
@@ -441,12 +467,19 @@ function autoSetRegionFromLocality(terms) {
         ];
             return `
                 <div class="card" data-id="${obs.id}">
-                    <div class="img-container" style="position:relative;">
-                        <img src="${mainPhoto}" class="main-photo" onclick="openZoom('${mainPhotoOrig}')" style="width:100%; display:block;">
-			${thumbnailsHtml}
-
-                        <button class="zoom-btn" onclick="openZoom('${mainPhotoOrig}')" style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:white; border:none; padding:8px; cursor:pointer; font-size:0.8rem;">🔍 Zoom</button>
-                    </div>
+                    <div class="img-container" 
+		     onclick="handleZoom(event)" 
+		     onmousemove="handleZoom(event)"
+		     ondblclick="handleDblClick(event)"
+		     onmousedown="startDrag(event)"
+		     onmouseup="stopDrag(event)"
+		     onmouseleave="stopDrag(event)">
+            <img src="${mainPhoto}" class="main-photo">
+            ${thumbnailsHtml}
+            <div style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.5); color:white; padding:2px 6px; border-radius:4px; font-size:0.7rem; pointer-events:none;">
+                Click to Zoom
+            </div>
+        </div>
 
           <div class="card-content-split">
                     <div class="info">
