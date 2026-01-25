@@ -15,7 +15,13 @@
 <div id="modal-location" class="modal">
     <div class="modal-content">
         <h3>Change Search Location</h3>
-        <p style="font-size: 0.8rem; color: #666;">Enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada).</p>
+
+<div style="position:relative; margin-bottom: 15px;">
+        <input type="text" id="location-search-input" placeholder="Search for a place (e.g. California)..." oninput="searchPlaces(this.value)" autocomplete="off">
+        <div id="location-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+    </div>
+
+        <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada).</p>
         <input type="text" id="new-place-id" placeholder="e.g. 6712,1">
         <div style="display:flex; gap:10px;">
             <button onclick="updateLocation()" class="btn-id" style="flex:1; padding:10px;">Update & Refresh</button>
@@ -952,6 +958,48 @@ function updateLocation() {
         closeModals();
         fetchObservations();    // Trigger new search
     }
+}
+
+
+let locationSearchTimeout = null;
+
+async function searchPlaces(query) {
+    const dropdown = document.getElementById('location-results-dropdown');
+    
+    if (query.length < 3) {
+        dropdown.style.display = 'none';
+        return;
+    }
+
+    clearTimeout(locationSearchTimeout);
+    locationSearchTimeout = setTimeout(async () => {
+        try {
+            // Fetch places from iNaturalist
+            const response = await fetch(`https://api.inaturalist.org/v1/places/autocomplete?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            if (data.results.length > 0) {
+                dropdown.innerHTML = data.results.map(p => `
+                    <div class="search-result-item" 
+                         style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 0.9rem; color: #333; text-align: left;"
+                         onclick="selectPlace('${p.id}', '${p.display_name}')">
+                        <strong>${p.name}</strong> <small style="color:#888;">(${p.display_name})</small>
+                    </div>
+                `).join('');
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        } catch (e) {
+            console.error("Location search failed", e);
+        }
+    }, 300);
+}
+
+function selectPlace(id, displayName) {
+    document.getElementById('new-place-id').value = id;
+    document.getElementById('location-search-input').value = displayName;
+    document.getElementById('location-results-dropdown').style.display = 'none';
 }
 
 

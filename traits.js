@@ -583,6 +583,21 @@ const traits = [
 ]
 },
     {
+        id: 'Tergitepubescence',
+        title: 'Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)',
+        weight: 3,
+        options: [
+            { 
+                label: 'extensively pubescent', 
+                description: 'Tergite 5 is extensively pubescent.' 
+            },
+            { 
+                label: 'more or less entirely polished', 
+                description: 'Tergite 5 is more or less entirely polished.' 
+            }
+]
+},
+    {
         id: 'Morphometricsbufonivoraelongata',
         title: 'Morphometrics: antenna size bufonivora-elongata',
         weight: 1,

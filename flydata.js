@@ -26,8 +26,9 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally (Whitworth 2010)', 'without extensive areas of abdominal pubescence that appear white-dusted'],
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_cuprina_female',
@@ -58,8 +59,9 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally (Whitworth 2010)', 'without extensive areas of abdominal pubescence that appear white-dusted'],
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_magnicornis_male',
@@ -83,7 +85,8 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_magnicornis_female',
@@ -107,7 +110,8 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_cluvia_male',
@@ -133,7 +137,8 @@ const flyData = [
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_cluvia_female',
@@ -159,7 +164,8 @@ const flyData = [
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_sericata_male',
@@ -188,8 +194,9 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally (Whitworth 2010)', 'without extensive areas of abdominal pubescence that appear white-dusted'],
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_sericata_female',
@@ -221,8 +228,9 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally (Whitworth 2010)', 'without extensive areas of abdominal pubescence that appear white-dusted'],
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_silvarum_male',
@@ -251,6 +259,7 @@ const flyData = [
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Malecercusinlateralview: ['with apical hook']
 },
 {
@@ -280,6 +289,7 @@ const flyData = [
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Femaleovipositorinventralview: ['with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided']
 },
 {
@@ -309,6 +319,7 @@ const flyData = [
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Malecercusinlateralview: ['without apical hook'],
           Malesurstylus: ['bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
           Morphometricsbufonivoraelongata: ['bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019']
@@ -339,6 +350,7 @@ const flyData = [
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Femaleovipositorinventralview: ['with ST7 and ST8 gradually widened posteriorly']
 },
 {
@@ -368,6 +380,7 @@ const flyData = [
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Malecercusinlateralview: ['without apical hook'],
           Malesurstylus: ['elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
           Morphometricsbufonivoraelongata: ['elongata has distinct morphometrics of the antennae and frons that distinguish it from bufonivora. See Jones et al. 2019']
@@ -398,6 +411,7 @@ const flyData = [
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Femaleovipositorinventralview: ['with ST7 and ST8 widened posteriorly after a sudden subapical constriction']
 },
 {
@@ -421,7 +435,8 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_thatuna_female',
@@ -445,7 +460,8 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_coeruleivirids_male',
@@ -470,7 +486,8 @@ const flyData = [
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_coeruleivirids_female',
@@ -495,7 +512,8 @@ const flyData = [
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_illustris_male',
@@ -518,7 +536,8 @@ const flyData = [
           Subcostalscleritesetae: ['1-5 black setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_illustris_female',
@@ -541,7 +560,8 @@ const flyData = [
           Subcostalscleritesetae: ['1-5 black setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent']
 },
 {
           id: 'l_mexicana_male',
@@ -570,6 +590,7 @@ const flyData = [
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['extensively pubescent'],
           Maleterminalia: ['posteriorly divergent; see Jones et al. 2019']
 },
 {
@@ -598,7 +619,8 @@ const flyData = [
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_eximia_male',
@@ -627,6 +649,7 @@ const flyData = [
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished'],
           Maleterminalia: ['posteriorly parallel; see Jones et al. 2019']
 },
 {
@@ -655,7 +678,8 @@ const flyData = [
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
-          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
+          Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
+          Tergitepubescence: ['more or less entirely polished']
 },
 {
           id: 'l_graphita_male',
@@ -663,9 +687,9 @@ const flyData = [
           taxonomy: ['Lucilia', 'Lucilia graphita'],
           distribution: ['HI'],
           species: 'Lucilia graphita',
-          Fronswidthatnarrowestformales: ['about 1% head width', 'about 3% head width', 'about 5% head width'],
           FronswidthatnarrowesttohelpIDmales: ['less than 7% of head width'],
           FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
+          Fronswidthatnarrowestformales: ['about 1% head width', 'about 3% head width', 'about 5% head width'],
           Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
           Bodycolor: ['shining black'],
           Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted']
