@@ -300,6 +300,7 @@ function copyNarrativeToClipboard() {
                 statusEl.innerHTML = `<a href="https://www.inaturalist.org/identifications/${user.login}" target="_blank" style="color: white; text-decoration: none;">ACTIVE: ${user.login}</a>`;
                 statusEl.className = "status-good";
                 controls.classList.add('hidden');
+		if (toggleLocBtn) toggleLocBtn.classList.remove('hidden');
                 if (toggleBtn) toggleBtn.classList.remove('hidden');
                 if (viewerPanel) viewerPanel.style.display = 'block';
                 document.body.classList.remove('wide-layout');
@@ -387,6 +388,7 @@ function autoSetRegionFromLocality(terms) {
         updateUI();
         console.log(`Auto-detected region: ${match.name}`);
     }
+   jumpToNextQuestion() // could turn off.
 }
 
 
@@ -456,7 +458,7 @@ function autoSetRegionFromLocality(terms) {
                     </div>
                     <div class="btn-group">
 			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
-                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id}); excludeAndNext(${obs.id});">AGREE & NEXT</button>
+                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
 			<button class="btn-action" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
                         <button class="btn-skip" onclick="excludeAndNext(${obs.id})">SKIP</button>
                         <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
@@ -626,8 +628,11 @@ async function postImmediateID() {
     }
 
     function calculateShannonIndex(traitId, filteredFlies) {
-        // If only one fly is left, this trait is no longer needed to "narrow down" results
-        if (filteredFlies.length <= 1) return 0;
+	// 1. Get a list of unique species names currently in the filtered list
+	    const uniqueSpeciesCount = new Set(filteredFlies.map(fly => fly.species)).size;
+
+    	// 2. If there's only 1 species (or 0) left, this trait has no diagnostic value
+    	if (uniqueSpeciesCount <= 1) return 0;
 
         const counts = {};
         let totalMatches = 0;
@@ -707,32 +712,78 @@ async function postImmediateID() {
     }
 
     function selectQuestion(id) {
-        activeId = id;
-        renderMenu();
-        const area = document.getElementById('active-question-area');
-        if (id === 'region') {
-            const currentRegionObj = regions.find(r => r.code === currentFilters.region);
-            area.innerHTML = `
-                <h4>Select Region</h4>
-                <div style="display: flex; gap: 5px; margin-bottom:10px;">
-                    <input list="regions-list" placeholder="Type region..." 
-                           value="${currentRegionObj ? currentRegionObj.name : ''}" oninput="handleRegionChange(this.value)" style="flex:1; padding:8px;">
-                </div>
-                <datalist id="regions-list">${regions.map(r => `<option value="${r.name}">${r.code}</option>`).join('')}</datalist>
-                <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('region')">Skip</button>
-            `;
-        } else {
-            const trait = traits.find(t => t.id === id);
-            area.innerHTML = `
-                <h4>${trait.title}</h4>
-                ${trait.options.map(opt => `
-                    <button class="option ${currentFilters[id] === opt.label ? 'active' : ''}" 
-                            onclick="handleTraitSelection('${id}', '${opt.label}')">${opt.label}</button>
-                `).join('')}
-                <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('${id}')">Skip</button>
-            `;
+    activeId = id;
+    renderMenu();
+
+    // 1. Calculate matches and diagnostic state
+    const currentMatches = getFilteredFlies(); 
+    const unanswered = traits.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id));
+    
+    // Check if everything left is 0 score (Confirmation Mode)
+    const isConfirmationMode = unanswered.every(q => {
+        const hValue = parseFloat(calculateShannonIndex(q.id, currentMatches));
+        return (hValue * (q.weight || 1)) <= 0;
+    });
+
+    // 2. Check if a valid iNaturalist token is present
+    const hasValidToken = isTokenValid(MY_TOKEN);
+
+    const area = document.getElementById('active-question-area');
+    
+    // Handle Region (Usually stays as a standard select)
+    if (id === 'region') {
+        const currentRegionObj = regions.find(r => r.code === currentFilters.region);
+        area.innerHTML = `
+            <h4>Select Region</h4>
+            <div style="display: flex; gap: 5px; margin-bottom:10px;">
+                <input list="regions-list" placeholder="Type region..." 
+                       value="${currentRegionObj ? currentRegionObj.name : ''}" oninput="handleRegionChange(this.value)" style="flex:1; padding:8px;">
+            </div>
+            <datalist id="regions-list">${regions.map(r => `<option value="${r.name}">${r.code}</option>`).join('')}</datalist>
+            <button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('region')">Skip</button>
+        `;
+    } else {
+        const trait = traits.find(t => t.id === id);
+        
+        // 3. Determine which button to show
+        let actionButtonHtml = "";
+        if (isConfirmationMode && hasValidToken) {
+            // Show "Post Results" if in confirmation mode and logged in
+            actionButtonHtml = `<button class="btn-post" style="width:100%; margin-top:10px;" onclick="postImmediateID()">Post Results & Next</button>`;
+        } else if (!isConfirmationMode) {
+            // Show "Skip" if there are still useful questions to answer
+            actionButtonHtml = `<button class="reset-btn" style="background:#95a5a6" onclick="skipQuestion('${id}')">Skip</button>`;
         }
+        // If it's confirmation mode but NO token, we show nothing (as requested)
+
+        area.innerHTML = `
+            <h4>${trait.title}</h4>
+            ${trait.options.map(opt => `
+                <button class="option ${currentFilters[id] === opt.label ? 'active' : ''}" 
+                        onclick="handleTraitSelection('${id}', '${opt.label}')">${opt.label}</button>
+            `).join('')}
+            ${actionButtonHtml}
+        `;
     }
+
+    // Scroll Logic
+    setTimeout(() => {
+        const item = document.querySelector(`.menu-item[onclick*="'${id}'"]`);
+        if (item) item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
+}
+
+
+function getFilteredFlies() {
+    return flyData.filter(fly => {
+        return Object.keys(currentFilters).every(key => {
+            if (currentFilters[key] === null) return true;
+            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+            if (fly[key] === undefined) return true;
+            return fly[key] && fly[key].includes(currentFilters[key]);
+        });
+    });
+}
 
     function handleRegionChange(val) {
         const foundRegion = regions.find(r => r.name.toUpperCase() === val.trim().toUpperCase() || r.code.toUpperCase() === val.trim().toUpperCase());
@@ -740,6 +791,7 @@ async function postImmediateID() {
             currentFilters.region = foundRegion.code; 
             if (!answerOrder.includes('region')) answerOrder.push('region');
             skippedQuestions = skippedQuestions.filter(sid => sid !== 'region');
+            setTimeout(jumpToNextQuestion, 300);
         } else { currentFilters.region = null; }
         updateUI();
     }
@@ -752,6 +804,7 @@ async function postImmediateID() {
             currentFilters[traitId] = value;
             skippedQuestions = skippedQuestions.filter(sid => sid !== traitId);
             if (!answerOrder.includes(traitId)) answerOrder.push(traitId);
+            setTimeout(jumpToNextQuestion, 300);
         }
         selectQuestion(traitId);
         updateUI();
@@ -762,6 +815,7 @@ async function postImmediateID() {
         if (!skippedQuestions.includes(id)) skippedQuestions.push(id);
         currentFilters[id] = null;
         if (activeId === id) selectQuestion(id); 
+        setTimeout(jumpToNextQuestion, 200);
         updateUI();
     }
 
@@ -870,7 +924,7 @@ async function postImmediateID() {
                 }
                 narrative.push(`<br><br>Therefore, we can narrow this down to ${resultText}`);
             }
-            narrative.push(`<br><br>See  notes and illustrations at <a href="https://sites.google.com/view/flyguide/species-guides/calliphoridae">https://sites.google.com/view/flyguide/species-guides/calliphoridae</a>.`);
+            narrative.push(`<br><br>See tools at <a href="https://sites.google.com/view/flyguide/species-guides/calliphoridae">https://sites.google.com/view/flyguide/species-guides/calliphoridae</a>.`);
             summaryBox.innerHTML = narrative.join(" ");
         } else {
             summaryBox.innerHTML = "Select traits to generate description.";
@@ -1003,6 +1057,35 @@ function selectPlace(id, displayName) {
 }
 
 
+function jumpToNextQuestion() {
+    // 1. Get the list of questions in the same order they appear in the menu
+    const currentMatches = flyData.filter(fly => {
+        return Object.keys(currentFilters).every(key => {
+            if (currentFilters[key] === null) return true;
+            if (key === 'region') return fly.distribution && fly.distribution.includes(currentFilters[key]);
+            if (fly[key] === undefined) return true;
+            return fly[key] && fly[key].includes(currentFilters[key]);
+        });
+    });
+
+    const allQuestions = [{ id: 'region', title: 'Region', weight: 10}, ...traits];
+    
+    // 2. Filter for only unanswered and unskipped questions
+    const remaining = allQuestions.filter(q => currentFilters[q.id] === null && !skippedQuestions.includes(q.id));
+
+    // 3. Sort them by score (matches your renderMenu logic)
+    const sortedRemaining = remaining.map(q => {
+        const hValue = parseFloat(calculateShannonIndex(q.id, currentMatches));
+        const score = hValue * (q.weight || 1);
+        return { ...q, score };
+    }).sort((a, b) => b.score - a.score);
+
+    // 4. If there's a valid next question, select it
+    if (sortedRemaining.length > 0 && sortedRemaining[0].score > 0) {
+        selectQuestion(sortedRemaining[0].id);
+    }
+}
+
 
 </script>
 
@@ -1012,11 +1095,12 @@ function selectPlace(id, displayName) {
         Built by Even Dankowicz, this workspace is designed to streamline the identification of <i>Lucilia</i> flies 
         by combining a character-based matrix with the iNaturalist verification queue. 
         Select traits from the menu to filter matching species and generate a diagnostic narrative.
-	<p>Most of the features used in this key are explained in my <a href="Lucilia_US_Canada.pdf">illustrated guide to Greenbottle Flies (Calliphoridae: <i>Lucilia</i>) of the USA and Canada</a>. Many features are also shown in <a href="https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf">Jones et al (2019)</a>, which is the best resource to start identifying specimens under a microscope.
+	<p>Most of the features used in this key are explained in my <a href="Lucilia_US_Canada.pdf">illustrated guide to Greenbottle Flies (Calliphoridae: <i>Lucilia</i>) of the USA and Canada</a>. Many features are also shown in <a href="https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf">Jones et al (2019)</a>, which is the best resource to start identifying specimens under a microscope. For my other fly ID resources, visit <a href="https://sites.google.com/view/flyguide/">https://sites.google.com/view/flyguide/</a>.
+	<br><br>
 	<p>I refined this dataset by studying preserved specimens, live flies, and photos.
 	A lot of the trait and distribution records were initially derived from the following references:
 	<p>
-	<br>Falk, 2016. British Blowflies (Calliphoridae) and Woodlouse Flies (Rhinophoridae). Draft Key March 2016. https://quelestcetanimal-lagalerie.com/wp-content/uploads/2017/01/testkeytobritishblowflies132016.pdf 
+	Falk, 2016. British Blowflies (Calliphoridae) and Woodlouse Flies (Rhinophoridae). Draft Key March 2016. https://quelestcetanimal-lagalerie.com/wp-content/uploads/2017/01/testkeytobritishblowflies132016.pdf 
 	<p>Hall, Townsend, 1977. The Blow Flies of Virginia (Diptera: Calliphoridae). Virginia Tech Research Division Bulletin 123.
 	<p>Jones, Whitworth, Marshall, 2019. Blow flies of North America: Keys to the subfamilies and genera of Calliphoridae, and to the species of the subfamilies Calliphorinae, Luciliinae and Chrysomyinae. Canadian Journal of Arthropod Identification. 39. https://cjai.biologicalsurvey.ca/jwm_39/jwm_39.html 
 	<p>Marshall, Whitworth, Roscoe, 2011. Blow flies (Diptera: Calliphoridae) of eastern Canada with a key to Calliphoridae subfamilies and genera of eastern North America, and a key to the eastern Canadian species of Calliphorinae, Luciliinae and Chrysomyiinae. Canadian Journal of Arthropod Identification. 11.

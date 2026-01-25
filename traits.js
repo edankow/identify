@@ -276,11 +276,11 @@ const traits = [
         options: [
             { 
                 label: 'in length, less than half of the height of eye in lateral view', 
-                description: 'The first flagellomere is in length, less than half of the height of eye in lateral view.' 
+                description: 'The first flagellomere is, in length, less than half of the height of eye in lateral view.' 
             },
             { 
                 label: 'in length, more than half of the height of eye in lateral view', 
-                description: 'The first flagellomere is in length, more than half of the height of eye in lateral view.' 
+                description: 'The first flagellomere is, in length, more than half of the height of eye in lateral view.' 
             }
 ]
 },
@@ -457,7 +457,7 @@ const traits = [
     {
         id: 'Basicostacolor',
         title: 'What color is the basicosta? (sometimes ambiguous, see notes)',
-        weight: 6,
+        weight: 4,
         options: [
             { 
                 label: 'orange, yellow, or whitish', 
