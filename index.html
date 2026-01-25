@@ -17,7 +17,7 @@
         <div id="location-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
     </div>
 
-        <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada).</p>
+        <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada). You can also enter other filters *after* the locality, e.g. "6712,1&user_id=edanko".</p>
         <input type="text" id="new-place-id" placeholder="e.g. 6712,1">
         <div style="display:flex; gap:10px;">
             <button onclick="updateLocation()" class="btn-id" style="flex:1; padding:10px;">Update & Refresh</button>
@@ -1165,5 +1165,6 @@ function jumpToNextQuestion() {
 </body>
 
 </html>
+
 
 
