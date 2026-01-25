@@ -778,6 +778,10 @@ async function postImmediateID() {
     } else {
         const trait = traits.find(t => t.id === id);
         
+	const linkHtml = trait.link 
+            ? `<a href="${trait.link}" target="_blank" style="text-decoration:none; margin-left:auto; font-size:2rem; color:#2980b9;" line-height:1; title="View trait details">ⓘ</a>` 
+            : "";
+
         // 3. Determine which button to show
         let actionButtonHtml = "";
         if (isConfirmationMode && hasValidToken) {
@@ -790,7 +794,10 @@ async function postImmediateID() {
         // If it's confirmation mode but NO token, we show nothing (as requested)
 
         area.innerHTML = `
-            <h4>${trait.title}</h4>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+      		  <h4 style="margin: 0; padding-bottom: 10px;">${trait.title}</h4>
+       		 ${linkHtml}
+    		</div>
             ${trait.options.map(opt => `
                 <button class="option ${currentFilters[id] === opt.label ? 'active' : ''}" 
                         onclick="handleTraitSelection('${id}', '${opt.label}')">${opt.label}</button>

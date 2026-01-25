@@ -1,10 +1,11 @@
 // Trait definitions
 // note that weight is straightforwardness from 10 to 10. e.g. region is weight 10.
 const traits = [
-        {
+    {
         id: 'Headlength',
         title: 'How long is head? (difficult to assess; character taken from Whitworth 2006)',
         weight: 2,
+        link: 'Lucilia_US_Canada.pdf#page=17',
         options: [
             { 
                 label: 'Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 
@@ -20,6 +21,7 @@ const traits = [
         id: 'Fronsnarrowing',
         title: 'Frons shape (to separate males and females)',
         weight: 9,
+        link: 'Lucilia_US_Canada.pdf#page=5',
         options: [
             { 
                 label: 'conspicuously narrowed above antennal bases', 
@@ -35,6 +37,7 @@ const traits = [
         id: 'FronswidthatnarrowesttohelpIDmales',
         title: 'Frons more than 7% of head?',
         weight: 5,
+        link: 'Lucilia_US_Canada.pdf#page=9',
         options: [
             { 
                 label: 'at least 7% of the head width', 
@@ -50,6 +53,7 @@ const traits = [
         id: 'FronswidthatnarrowesttohelpIDfemales',
         title: 'Frons more than 35% of head width?',
         weight: 3,
+        link: 'Lucilia_US_Canada.pdf#page=11',
         options: [
             { 
                 label: 'less than 35% head width', 
@@ -65,6 +69,7 @@ const traits = [
         id: 'Frontoorbitalplatesformaleswithnarrowfrons',
         title: 'How widely separated are fronto-orbital plates?',
         weight: 5,
+        link: 'Lucilia_US_Canada.pdf#page=12',
         options: [
             { 
                 label: 'strongly separated. See figures in Jones et al. 2019, p.174, 180', 
@@ -84,6 +89,7 @@ const traits = [
         id: 'Fronswidthatnarrowestformales',
         title: 'Round or estimate frons width at narrowest',
         weight: 3,
+        link: 'Lucilia_US_Canada.pdf#page=9',
         options: [
             { 
                 label: 'about 20% head width', 
@@ -119,6 +125,7 @@ const traits = [
         id: 'fronswidthvscuprinamale',
         title: 'Frons more than 15% of head width?',
         weight: 5,
+        link: 'Lucilia_US_Canada.pdf#page=9',
         options: [
             { 
                 label: 'at least about 20% head width', 
@@ -134,6 +141,7 @@ const traits = [
         id: 'Ocellartriangle',
         title: 'Ocellar triangle size (see p141 in Jones et al. 2019).',
         weight: 2,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=141',
         options: [
             { 
                 label: 'relatively small, with basal swelling extending less than halfway to lunule', 
@@ -149,6 +157,7 @@ const traits = [
         id: 'IVSorientation',
         title: 'Do inner vertical setae converge?',
         weight: 2,
+        link: 'Lucilia_US_Canada.pdf#page=30',
         options: [
             { 
                 label: 'nearly parallel in dorsal view', 
@@ -164,6 +173,7 @@ const traits = [
         id: 'Parafacialwidthatleveloflunule',
         title: 'Parafacial width at level of lunule.',
         weight: 4,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=179',
         options: [
             { 
                 label: 'broader than the width of the first flagellomere', 
@@ -179,6 +189,7 @@ const traits = [
         id: 'Parafacialcolor',
         title: 'Parafacial color? (figure on p.167 of Jones et al 2019)',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167',
         options: [
             { 
                 label: 'bright silvery (Whitworth 2014)', 
@@ -198,6 +209,7 @@ const traits = [
         id: 'Genae',
         title: 'Genae (be careful not to confuse genae with postgenae).',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=173',
         options: [
             { 
                 label: 'with dark setae only', 
@@ -213,6 +225,7 @@ const traits = [
         id: 'Genaldilation',
         title: 'Genal dilation (figure on p.167 of Jones et al 2019).',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167',
         options: [
             { 
                 label: 'greyish-white (with dark setae)', 
@@ -228,6 +241,7 @@ const traits = [
         id: 'Angleformedbyverticalsetae',
         title: 'What angle do the three vertical setae form?',
         weight: 1,
+        link: 'https://zookeys.pensoft.net/article/3908/element/2/11//',
         options: [
             { 
                 label: 'a right angle', 
@@ -243,6 +257,7 @@ const traits = [
         id: 'Occipitalsetae',
         title: 'Setae below and behind postocular setae (see figures of mexicana and eximia, e.g. in Jones et al. 2019).',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=166',
         options: [
             { 
                 label: 'stout and black', 
@@ -258,6 +273,7 @@ const traits = [
         id: 'Occipitalsetaebehindinnerverticalseta',
         title: 'Occipital setae behind inner vertical seta (see figures in Jones et al. 2019)',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=184',
         options: [
             { 
                 label: 'a single seta.', 
@@ -273,6 +289,7 @@ const traits = [
         id: 'stflagellomerelengthrelativetoeyelength',
         title: 'How long is the first flagellomere relative to the height of the eye?',
         weight: 2,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=147',
         options: [
             { 
                 label: 'in length, less than half of the height of eye in lateral view', 
@@ -288,6 +305,7 @@ const traits = [
         id: 'Palpscolor',
         title: 'Palps color.',
         weight: 3,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=144',
         options: [
             { 
                 label: 'at least partially dark brown to black', 
@@ -303,6 +321,7 @@ const traits = [
         id: 'Bodycolor',
         title: 'Color of thorax or abdomen? (unreliable for dead flies)',
         weight: 5,
+        link: 'Lucilia_US_Canada.pdf#page=27',
         options: [
             { 
                 label: 'coppery brown', 
@@ -338,6 +357,7 @@ const traits = [
         id: 'presuturalacrostichalsetaeposteriorpairfirst',
         title: 'Posterior presutural acrostichal setae separation',
         weight: 2,
+        link: '',
         options: [
             { 
                 label: 'The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 
@@ -353,6 +373,7 @@ const traits = [
         id: 'presuturalacrostichalsetaeposteriorpairsecond',
         title: 'Posterior presutural acrostichal-dorsocentral setae separation',
         weight: 1,
+        link: '',
         options: [
             { 
                 label: 'The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 
@@ -368,6 +389,7 @@ const traits = [
         id: 'Setulaeonposteriorpostpronotum',
         title: 'Setae on posterior postpronotum (see figures, e.g. in Jones et al. 2019)',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=185',
         options: [
             { 
                 label: 'small and number 2-3', 
@@ -383,6 +405,7 @@ const traits = [
         id: 'Setulaeonposteriornotopleuron',
         title: 'Setulae on posterior notopleuron (see figures, e.g. in Jones et al. 2019)',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=185',
         options: [
             { 
                 label: 'small and number 2-3', 
@@ -398,6 +421,7 @@ const traits = [
         id: 'acrostichalspostsutural',
         title: '# of post-sutural acrostichal pairs.',
         weight: 7,
+        link: 'Lucilia_US_Canada.pdf#page=19',
         options: [
             { 
                 label: 'three', 
@@ -413,6 +437,7 @@ const traits = [
         id: 'intraalarsetaepresutural',
         title: 'Is a pre-sutural intra-alar seta present?',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=146',
         options: [
             { 
                 label: 'not present', 
@@ -428,6 +453,7 @@ const traits = [
         id: 'intraalarsetaePostsutural',
         title: '# of postsutural intra-alar setae',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=146',
         options: [
             { 
                 label: 'three', 
@@ -443,6 +469,7 @@ const traits = [
         id: 'Subcostalscleritesetae',
         title: 'Does the subcostal sclerite (ventral wing base) have setae?',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=140',
         options: [
             { 
                 label: 'no setae', 
@@ -458,6 +485,7 @@ const traits = [
         id: 'Basicostacolor',
         title: 'What color is the basicosta? (sometimes ambiguous, see notes)',
         weight: 4,
+        link: 'Lucilia_US_Canada.pdf#page=21',
         options: [
             { 
                 label: 'orange, yellow, or whitish', 
@@ -477,6 +505,7 @@ const traits = [
         id: 'Lowercalyptercolor',
         title: 'What color is the lower calypter?',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=152',
         options: [
             { 
                 label: 'pale, similar to upper calypter', 
@@ -492,6 +521,7 @@ const traits = [
         id: 'Abdominalpubescence',
         title: 'Abdomen with extensive areas of whitish pubescence patterning?',
         weight: 4,
+        link: '',
         options: [
             { 
                 label: 'with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)', 
@@ -507,6 +537,7 @@ const traits = [
         id: 'Tsetae',
         title: 'Are there long, erect setae in the middle of the posterior margin of tergite 3 (the first abdominal segment beyond the scutellum)?',
         weight: 2,
+        link: '',
         options: [
             { 
                 label: 'without especially strong or erect median marginal setae (Whitworth 2006)', 
@@ -519,9 +550,26 @@ const traits = [
 ]
 },
     {
+        id: 'Tergitepubescence',
+        title: 'Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)',
+        weight: 3,
+        link: '',
+        options: [
+            { 
+                label: 'extensively pubescent', 
+                description: 'Tergite 5 is extensively pubescent.' 
+            },
+            { 
+                label: 'more or less entirely polished', 
+                description: 'Tergite 5 is more or less entirely polished.' 
+            }
+]
+},
+    {
         id: 'Malecercusinlateralview',
         title: 'Male cercus, in lateral view',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=153',
         options: [
             { 
                 label: 'with apical hook', 
@@ -537,6 +585,7 @@ const traits = [
         id: 'Femaleovipositorinventralview',
         title: 'Female ovipositor, in ventral view',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=154',
         options: [
             { 
                 label: 'with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided', 
@@ -556,6 +605,7 @@ const traits = [
         id: 'Malesurstylus',
         title: 'Male surstylus',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=157',
         options: [
             { 
                 label: 'bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)', 
@@ -571,6 +621,7 @@ const traits = [
         id: 'Maleterminalia',
         title: 'Male cerci',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=168',
         options: [
             { 
                 label: 'posteriorly divergent; see Jones et al. 2019', 
@@ -583,24 +634,10 @@ const traits = [
 ]
 },
     {
-        id: 'Tergitepubescence',
-        title: 'Tergite 5 pubescence? (may just appear as faint white-dusting along edges of visible region, even if extensive)',
-        weight: 3,
-        options: [
-            { 
-                label: 'extensively pubescent', 
-                description: 'Tergite 5 is extensively pubescent.' 
-            },
-            { 
-                label: 'more or less entirely polished', 
-                description: 'Tergite 5 is more or less entirely polished.' 
-            }
-]
-},
-    {
         id: 'Morphometricsbufonivoraelongata',
         title: 'Morphometrics: antenna size bufonivora-elongata',
         weight: 1,
+        link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=158',
         options: [
             { 
                 label: 'bufonivora has distinct morphometrics of the antennae and frons that distinguish it from elongata. See Jones et al. 2019', 
