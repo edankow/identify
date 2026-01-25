@@ -49,7 +49,7 @@
 { name: "Oregon", code: "OR" },
 { name: "Pennsylvania", code: "PA" },
 { name: "Prince Edward Island", code: "PE" },
-{ name: "Quebec", code: "QC" },
+{ name: "Québec", code: "QC" },
 { name: "Rhode Island", code: "RI" },
 { name: "Saskatchewan", code: "SK" },
 { name: "South Carolina", code: "SC" },

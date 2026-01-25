@@ -18,7 +18,7 @@ const traits = [
 },
     {
         id: 'Fronsnarrowing',
-        title: 'Does the frons narrow between the vertex and the antennal bases?',
+        title: 'Frons shape (to separate males and females)',
         weight: 9,
         options: [
             { 
@@ -340,12 +340,12 @@ const traits = [
         weight: 2,
         options: [
             { 
-                label: 'the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 
-                description: 'the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae.' 
+                label: 'The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 
+                description: 'The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae.' 
             },
             { 
-                label: 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae', 
-                description: 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae.' 
+                label: 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae', 
+                description: 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae.' 
             }
 ]
 },
@@ -355,12 +355,12 @@ const traits = [
         weight: 1,
         options: [
             { 
-                label: 'the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 
-                description: 'the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance.' 
+                label: 'The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 
+                description: 'The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance.' 
             },
             { 
-                label: 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance', 
-                description: 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance.' 
+                label: 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance', 
+                description: 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance.' 
             }
 ]
 },
@@ -397,7 +397,7 @@ const traits = [
     {
         id: 'acrostichalspostsutural',
         title: '# of post-sutural acrostichal pairs.',
-        weight: 6,
+        weight: 7,
         options: [
             { 
                 label: 'three', 
@@ -490,16 +490,16 @@ const traits = [
 },
     {
         id: 'Abdominalpubescence',
-        title: 'Abdomen with mesal division in pubescence patterning?',
+        title: 'Abdomen with extensive areas of whitish pubescence patterning?',
         weight: 2,
         options: [
             { 
-                label: 'with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)', 
-                description: 'with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010).' 
+                label: 'with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)', 
+                description: 'Abdomen with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light).' 
             },
             { 
-                label: 'without mesal division in abdominal pubescence', 
-                description: 'without mesal division in abdominal pubescence.' 
+                label: 'without extensive areas of abdominal pubescence that appear white-dusted', 
+                description: 'Abdomen without extensive areas of abdominal pubescence that appear white-dusted.' 
             }
 ]
 },

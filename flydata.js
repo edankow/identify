@@ -26,7 +26,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)','without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -58,7 +58,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)','without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -82,7 +82,7 @@ const flyData = [
           intraalarsetaePostsutural: ['three'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -106,7 +106,7 @@ const flyData = [
           intraalarsetaePostsutural: ['three'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -132,7 +132,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -158,7 +158,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -188,7 +188,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)','without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -221,7 +221,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['with apparent mesal division in which one half is microtomentose, the other half shining, often only visible when viewed from a sharp angle laterally  (Whitworth 2010)','without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -241,15 +241,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Malecercusinlateralview: ['with apical hook']
 },
@@ -270,15 +270,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'the distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 'The distance between the posterior pair of presutural acrostichal setae is equal to the distance between them and the posterior-most presutural dorsocentral setae, and not at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Femaleovipositorinventralview: ['with ST7 narrowing posteriorly, and ST8 elongate and parallel-sided']
 },
@@ -299,15 +299,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Malecercusinlateralview: ['without apical hook'],
           Malesurstylus: ['bufonivora has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
@@ -329,15 +329,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Femaleovipositorinventralview: ['with ST7 and ST8 gradually widened posteriorly']
 },
@@ -358,15 +358,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Malecercusinlateralview: ['without apical hook'],
           Malesurstylus: ['elongata has distinct male terminalia. See Jones et al. (2019) or Tantawy+Whitworth (2014)'],
@@ -388,15 +388,15 @@ const flyData = [
           stflagellomerelengthrelativetoeyelength: ['in length, less than half of the height of eye in lateral view'],
           Palpscolor: ['at least partially dark brown to black'],
           Bodycolor: ['reddish-orange brown', 'orangish green', 'yellowish green', 'emerald green', 'bluish'],
-          presuturalacrostichalsetaeposteriorpairfirst: ['the posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'the posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
-          presuturalacrostichalsetaeposteriorpairsecond: ['the distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
+          presuturalacrostichalsetaeposteriorpairfirst: ['The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 'The posterior pair of presutural acrostichal setae are much closer together to one another than they are to the posterior dorsocentral setae'],
+          presuturalacrostichalsetaeposteriorpairsecond: ['The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance'],
           acrostichalspostsutural: ['two', 'three'],
           intraalarsetaepresutural: ['present'],
           intraalarsetaePostsutural: ['two'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)'],
           Femaleovipositorinventralview: ['with ST7 and ST8 widened posteriorly after a sudden subapical constriction']
 },
@@ -420,7 +420,7 @@ const flyData = [
           acrostichalspostsutural: ['three'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -444,7 +444,7 @@ const flyData = [
           acrostichalspostsutural: ['three'],
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -469,7 +469,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -494,7 +494,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['orange, yellow, or whitish'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -517,7 +517,7 @@ const flyData = [
           acrostichalspostsutural: ['two'],
           Subcostalscleritesetae: ['1-5 black setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -540,7 +540,7 @@ const flyData = [
           acrostichalspostsutural: ['two'],
           Subcostalscleritesetae: ['1-5 black setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -568,7 +568,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
           Maleterminalia: ['posteriorly divergent; see Jones et al. 2019']
 },
@@ -597,7 +597,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -625,7 +625,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['light brown, somewhat darker than upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)'],
           Maleterminalia: ['posteriorly parallel; see Jones et al. 2019']
 },
@@ -654,7 +654,7 @@ const flyData = [
           Subcostalscleritesetae: ['no setae'],
           Basicostacolor: ['dark brown or black', 'tan to orange-brown'],
           Lowercalyptercolor: ['pale, similar to upper calypter'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence'],
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted'],
           Tsetae: ['without especially strong or erect median marginal setae (Whitworth 2006)']
 },
 {
@@ -667,7 +667,7 @@ const flyData = [
           FronswidthatnarrowesttohelpIDfemales: ['less than 35% head width'],
           Ocellartriangle: ['relatively small, with basal swelling extending less than halfway to lunule'],
           Bodycolor: ['shining black'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence']
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted']
 },
 {
           id: 'l_graphita_female',
@@ -677,6 +677,6 @@ const flyData = [
           species: 'Lucilia graphita',
           FronswidthatnarrowesttohelpIDmales: ['at least 7% of the head width'],
           Bodycolor: ['shining black'],
-          Abdominalpubescence: ['without mesal division in abdominal pubescence']
+          Abdominalpubescence: ['without extensive areas of abdominal pubescence that appear white-dusted']
 }
 ];
