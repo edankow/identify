@@ -1,1 +1,1 @@
-# edankow.github.io
+Built by Even Dankowicz, this workspace is designed to streamline the identification of Lucilia flies by combining a character-based matrix with the iNaturalist verification queue. Select traits from the menu to filter matching species and generate a diagnostic narrative. 
