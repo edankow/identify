@@ -779,7 +779,7 @@ async function postImmediateID() {
         const trait = traits.find(t => t.id === id);
         
 	const linkHtml = trait.link 
-            ? `<a href="${trait.link}" target="_blank" style="text-decoration:none; margin-left:auto; font-size:2rem; color:#2980b9;" line-height:1; title="View trait details">ⓘ</a>` 
+            ? `<a href="${trait.link}" target="_blank" style="text-decoration:none; margin-left:auto; font-size:2rem; color:#2980b9;" line-height:1; title="View trait details">&#9432;</a>` 
             : "";
 
         // 3. Determine which button to show
@@ -1165,3 +1165,4 @@ function jumpToNextQuestion() {
 </body>
 
 </html>
+
