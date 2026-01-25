@@ -22,8 +22,8 @@ const traits = [
         weight: 9,
         options: [
             { 
-                label: 'conspicuously narrowed above antennal bases (and either the frons width is no more than about 15% of the head width at narrowest point, or this is male L cuprina or L magnicornis)', 
-                description: 'The frons is conspicuously narrowed above antennal bases (and either the frons width is no more than about 15% of the head width at narrowest point, or this is male L cuprina or L magnicornis).' 
+                label: 'conspicuously narrowed above antennal bases', 
+                description: 'The frons is conspicuously narrowed above antennal bases.' 
             },
             { 
                 label: 'more or less parallel-sided; the frons width is significantly more than 20% of the head width at narrowest point', 
@@ -302,7 +302,7 @@ const traits = [
     {
         id: 'Bodycolor',
         title: 'Color of thorax or abdomen? (unreliable for dead flies)',
-        weight: 2,
+        weight: 5,
         options: [
             { 
                 label: 'coppery brown', 
@@ -491,7 +491,7 @@ const traits = [
     {
         id: 'Abdominalpubescence',
         title: 'Abdomen with extensive areas of whitish pubescence patterning?',
-        weight: 2,
+        weight: 4,
         options: [
             { 
                 label: 'with extensive areas of abdominal pubescence oriented outward from the abdomen’s line of symmetry (from above or behind the abdomen, the middle appears shiny and the sides generally appear white-dusted, while from a lateral angle, the dorsal half of the abdomen further away from the viewer and the ventral part of the lateral abdomen closer to the viewer generally appear white-dusted; to quote Hall and Townsend [1977], abdomen with apparent mesal division in which one-half is pollinose and the other shining, the character reversible and dependent upon the incidence of light)', 
