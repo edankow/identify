@@ -357,7 +357,7 @@ const traits = [
         id: 'presuturalacrostichalsetaeposteriorpairfirst',
         title: 'Posterior presutural acrostichal setae separation',
         weight: 2,
-        link: '',
+        link: 'https://www.researchgate.net/profile/Terry-Whitworth/publication/270220615_First_record_of_Lucilia_bufonivora_Moniez_1876_Diptera_Calliphoridae_from_North_America_and_key_to_North_American_species_of_the_L_bufonivora_species_group/links/570faf7408aec95f06158813/First-record-of-Lucilia-bufonivora-Moniez-1876-Diptera-Calliphoridae-from-North-America-and-key-to-North-American-species-of-the-L-bufonivora-species-group.pdf#page=9',
         options: [
             { 
                 label: 'The posterior pair of presutural acrostichal setae are NOT much closer together to one another than they are to the posterior dorsocentral setae', 
@@ -373,7 +373,7 @@ const traits = [
         id: 'presuturalacrostichalsetaeposteriorpairsecond',
         title: 'Posterior presutural acrostichal-dorsocentral setae separation',
         weight: 1,
-        link: '',
+        link: 'https://www.researchgate.net/profile/Terry-Whitworth/publication/270220615_First_record_of_Lucilia_bufonivora_Moniez_1876_Diptera_Calliphoridae_from_North_America_and_key_to_North_American_species_of_the_L_bufonivora_species_group/links/570faf7408aec95f06158813/First-record-of-Lucilia-bufonivora-Moniez-1876-Diptera-Calliphoridae-from-North-America-and-key-to-North-American-species-of-the-L-bufonivora-species-group.pdf#page=9',
         options: [
             { 
                 label: 'The distance between the posterior pair of presutural acrostichal setae is NOT equal to the distance between them and the posterior-most presutural dorsocentral setae, but rather at least slightly less than that distance', 
@@ -649,4 +649,5 @@ const traits = [
             }
 ]
 }
+
 ];
