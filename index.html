@@ -20,8 +20,8 @@
         <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada). You can also enter other filters *after* the locality, e.g. "6712,1&user_id=edanko".</p>
         <input type="text" id="new-place-id" placeholder="e.g. 6712,1">
         <div style="display:flex; gap:10px;">
-            <button onclick="updateLocation()" class="btn-id" style="flex:1; padding:10px;">Update & Refresh</button>
-            <button onclick="closeModals()" class="btn-skip" style="flex:1; padding:10px;">Cancel</button>
+            <button onclick="updateLocation()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px;">Cancel</button>
         </div>
     </div>
 </div>
@@ -41,8 +41,8 @@
 
         <input type="number" id="manual-taxon-id" placeholder="Enter Taxon ID Number...">
         <div style="display:flex; gap:10px;">
-            <button onclick="submitManualID()" class="btn-id" style="flex:1; padding:10px; border:none; border-radius:4px;">Submit</button>
-            <button onclick="closeModals()" class="btn-skip" style="flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
+            <button onclick="submitManualID()" class="btn-id" style="cursor: pointer; flex:1; padding:10px; border:none; border-radius:4px;">Submit</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
         </div>
     </div>
 </div>
@@ -52,8 +52,8 @@
         <h3>Add Comment</h3>
         <textarea id="comment-body" rows="4" placeholder="Type your comment..."></textarea>
         <div style="display:flex; gap:10px;">
-            <button onclick="submitComment()" class="btn-action" style="flex:1; padding:10px; border:none; border-radius:4px;">Post Comment</button>
-            <button onclick="closeModals()" class="btn-skip" style="flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
+            <button onclick="submitComment()" class="btn-action" style="cursor: pointer; flex:1; padding:10px; border:none; border-radius:4px;">Post Comment</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px; border:none; border-radius:4px;">Cancel</button>
         </div>
     </div>
 </div>
@@ -118,6 +118,7 @@
 
 <script>
     /* --- SHARED STATE --- */
+    let TOTAL_API_RESULTS = 0; 
     let MY_USER_ID = null;
     let MY_TOKEN = localStorage.getItem('inat_token') || "";
     let FINISHED_OBS_IDS = [];
@@ -125,7 +126,7 @@
     let CURRENT_OBS_ID = null;
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
-    let API_BASE = "https://api.inaturalist.org/v1/observations?per_page=50&taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id";
+    let API_BASE = "https://api.inaturalist.org/v1/observations?per_page=50&taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id&order=asc";
 
 let isPinned = false; 
 
@@ -354,6 +355,7 @@ function copyNarrativeToClipboard() {
             const filteredURL = `${API_BASE}&place_id=${CURRENT_PLACE_ID}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
+            TOTAL_API_RESULTS = data.total_results || 0;
             if (data.results?.length > 0) {
                 OBSERVATION_QUEUE = data.results;
                 showNextFromQueue();
@@ -370,7 +372,7 @@ async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
     CURRENT_OBS_ID = obs.id;
-    document.getElementById('queue-count').innerText = `(${OBSERVATION_QUEUE.length} buffered)`; 
+    document.getElementById('queue-count').innerText = `(${TOTAL_API_RESULTS} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
     //Capture the community taxon ID from the queue data	
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
@@ -421,7 +423,7 @@ function autoSetRegionFromLocality(terms) {
 
 
     function renderObservations(observations, geoHierarchy) {
-        const grid = document.getElementById('observation-grid');
+	const grid = document.getElementById('observation-grid');
         grid.innerHTML = observations.map(obs => {
             const photos = obs.observation_photos || [];
         const mainPhoto = photos[0]?.photo.url.replace("square", "large") || "";
@@ -434,6 +436,7 @@ function autoSetRegionFromLocality(terms) {
                     <img src="${p.photo.url}" 
                          style="width: 45px; height: 45px; object-fit: cover; cursor: pointer; border: 2px solid ${idx === 0 ? '#2980b9' : 'transparent'};" 
                          onclick="
+                            event.stopPropagation();
                             const card = this.closest('.card');
                             const largeUrl = '${p.photo.url.replace("square", "large")}';
                             const origUrl = '${p.photo.url.replace("square", "original")}';
@@ -444,6 +447,14 @@ function autoSetRegionFromLocality(terms) {
                 `).join('')}
             </div>
         ` : '';
+
+        const monthNames = [
+   	 "January", "February", "March", "April", "May", "June",
+ 	   "July", "August", "September", "October", "November", "December"
+	];
+	const dateDetails = obs.observed_on_details;
+	const monthName = monthNames[dateDetails.month - 1]; // -1 because arrays are 0-indexed
+	const formattedDate = `${monthName} ${dateDetails.day}, ${dateDetails.year}`;
 
  	// 1. Create a combined list of all Comments and all Identifications
         const allDiscussion = [
@@ -485,16 +496,19 @@ function autoSetRegionFromLocality(terms) {
                     <div class="info">
                         <a href="https://www.inaturalist.org/observations/${obs.id}" target="_blank" style="text-decoration:none; color:inherit;">
                             <h2 style="margin:0; font-size:1.2rem;">${obs.taxon?.preferred_common_name || "Unknown"}</h2>
-                            <i style="color:#666; font-size:0.8rem;">${obs.taxon?.name || "Unknown"}</i>
+			    <style="color:#666; font-size:0.8rem;">${obs.taxon?.rank && obs.taxon.rank !== 'species' ? obs.taxon.rank.charAt(0).toUpperCase() + obs.taxon.rank.slice(1) + ' ' : ''}<i>${obs.taxon?.name || "Unknown"}</i></style>
                         </a>
+		      <div class="obs-date" style="font-size:0.75rem; color:#555; margin-top:4px;">
+		        <strong>DATE:</strong> ${formattedDate}
+		    </div>
                         <div class="geo-hierarchy"><span style="font-size:0.7em; font-weight:bold;">LOCALITY:</span><br>${geoHierarchy}</div>
                     </div>
                     <div class="btn-group">
 			<button class="btn-post" onclick="postImmediateID()">POST RESULTS & NEXT</button>
-                        <button class="btn-id" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
-			<button class="btn-action" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
-                        <button class="btn-skip" onclick="excludeAndNext(${obs.id})">SKIP</button>
-                        <button class="btn-action" onclick="openCommentModal()">COMMENT</button>
+                        <button class="btn-id" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
+			<button class="btn-action" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
+                        <button class="btn-skip" onmouseover="this.style.filter='brightness(0.8)'" onmouseout="this.style.filter='brightness(1)'" onclick="excludeAndNext(${obs.id})">SKIP</button>
+                        <button class="btn-action" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="openCommentModal()">COMMENT</button>
                     </div>
       	 </div> 
 			<div class="comments-section" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.85rem; color: #444; max-height: 200px; overflow-y: auto;">
@@ -527,7 +541,7 @@ function autoSetRegionFromLocality(terms) {
         } catch (e) { console.error("ID Failed", e); }
     }
 
-async function setCommunityTaxonStatus() {
+async function setCommunityTaxonStatus(taxonInfo) {
     if (!CURRENT_OBS_ID || !MY_TOKEN) {
         console.error("Missing Observation ID or Token");
         return;
@@ -535,31 +549,42 @@ async function setCommunityTaxonStatus() {
 
     //storing constants before starting timer
     const COMM_CURRENT = CURRENT_OBS_ID
+    const TAXON_OLD = taxonInfo
 
     // 10 second delay for server processing of initial ID
     await new Promise(resolve => setTimeout(resolve, 10000));
 
-    try {
-    	  const response = await fetch(`https://api.inaturalist.org/v1/votes/vote/observation/${COMM_CURRENT}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${MY_TOKEN}`
-            },
-            body: JSON.stringify({
-                vote: "down",
-                scope: "needs_id"
-            })
-           });
+    const response = await fetch(`https://api.inaturalist.org/v1/observations/${COMM_CURRENT}`);
+    const data = await response.json();
+    const latestCommunityID = data.results[0].taxon?.id;
 
-        if (response.ok) {
-            console.log(`Successfully voted to end "Needs ID" for observation ${COMM_CURRENT}`);
-        } else { 
-		console.error("Failed to update status:", await response.json());
-	}
-    } catch (e) {
-        console.error("Network error:", e);
-    }   
+    // Compare: Only vote if new ID matches existing community ID
+    if (TAXON_OLD.rank !== "species" && latestCommunityID === TAXON_OLD.taxonId) {
+                console.log(`ID is at rank: ${TAXON_OLD.rank}. Sending cannot improve community ID...`);
+
+	    try {
+	    	  const response = await fetch(`https://api.inaturalist.org/v1/votes/vote/observation/${COMM_CURRENT}`, {
+	            method: "POST",
+	            headers: {
+	                "Content-Type": "application/json",
+	                "Authorization": `Bearer ${MY_TOKEN}`
+	            },
+	            body: JSON.stringify({
+	                vote: "down",
+	                scope: "needs_id"
+	            })
+	           });
+	
+	        if (response.ok) {
+	            console.log(`Successfully voted to end "Needs ID" for observation ${COMM_CURRENT}`);
+	        } else { 
+			console.error("Failed to update status:", await response.json());
+		}
+	    } catch (e) {
+	        console.error("Network error:", e);
+	    }   
+
+    }
 }
 
 async function postImmediateID() {
@@ -583,11 +608,8 @@ async function postImmediateID() {
         
         if (taxonInfo && taxonInfo.taxonId) {
             // --- WHAT DO IF NOT A SPECIES LEVEL ID --
-	        // Compare: Only vote if new ID matches existing community ID
-            if (taxonInfo.rank !== "species" && CURRENT_COMMUNITY_ID === taxonInfo.taxonId) {
-                console.log(`ID is at rank: ${taxonInfo.rank}. Sending cannot improve community ID...`);
-                setCommunityTaxonStatus();
-            }
+                setCommunityTaxonStatus(taxonInfo);
+           
 
             // 3. Submit immediately to iNat
             sendIdentification(CURRENT_OBS_ID, taxonInfo.taxonId);
@@ -678,7 +700,7 @@ async function postImmediateID() {
 
                 flyOptions.forEach(opt => {
                     counts[opt] = (counts[opt] || 0) + weightPerOption;
-                    totalMatches++;
+                    totalMatches += weightPerOption;
                 });
             }
         });
@@ -1138,7 +1160,7 @@ function jumpToNextQuestion() {
 		<p>A few important functions that may not be obvious:
 			<ul>
 		  <li>Authenticating your iNat account with the iNat API unlocks a set of functions equivalent to the 'Identify' tool.</li>
-		  <li>If your ID is above species level and the same as the existing community ID, the 'Post Results' button will mark "Based on the evidence, can the Community Taxon still be confirmed or improved?" as "No, it's as good as it can be."</li>
+		  <li>If your ID is above species level and the same as the new community ID, the 'Post Results' button will mark "Based on the evidence, can the Community Taxon still be confirmed or improved?" as "No, it's as good as it can be."</li>
 		  <li>If your ID is not an agreement with an existing species-level community ID, the 'Post Results' button will paste a description of your ID in a comment.</li>
 		  <li>Like in the 'Identify' tool, clicking on the current community ID will open the observation in a new tab.</li>
 			<li>Clicking on your username in the top left will open your 'identifications' page on iNaturalist, in case you want to go back to an observation you've recently IDed.</li>

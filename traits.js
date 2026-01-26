@@ -87,7 +87,7 @@ const traits = [
 },
     {
         id: 'Fronswidthatnarrowestformales',
-        title: 'Round or estimate frons width at narrowest',
+        title: 'Round or estimate frons width at narrowest (skip if ambiguous)',
         weight: 3,
         link: 'lucilia_us_canada.pdf#page=9',
         options: [
