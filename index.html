@@ -167,7 +167,6 @@ function handleZoom(e) {
 }
 
 function handleDblClick(event) {
-    if (!isZoomedIn) return;
     isPinned = !isPinned;
     event.currentTarget.classList.toggle('pinned', isPinned);
     
@@ -373,7 +372,7 @@ async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
     CURRENT_OBS_ID = obs.id;
-    document.getElementById('queue-count').innerText = `  (${TOTAL_API_RESULTS+OBSERVATION_QUEUE.length-BATCH_SIZE} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
+    document.getElementById('queue-count').innerText = `  (${TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
     //Capture the community taxon ID from the queue data	
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
