@@ -61,8 +61,8 @@
 <div id="token-bar">
     <div>
         <span id="token-status"></span>
+			<button id="change-loc-btn" onclick="openLocationModal()" class="btn-toggle" style="margin-left: 10px; font-size: 0.7rem;">Change Location</button>
         <span id="queue-count" style="font-size: 0.8em; opacity: 0.8;"></span>
-	<button id="change-loc-btn" onclick="openLocationModal()" class="btn-toggle" style="margin-left: 10px; font-size: 0.7rem;">Change Location</button>
     </div>
 
     <div class="token-section-center">
@@ -124,9 +124,10 @@
     let FINISHED_OBS_IDS = [];
     let OBSERVATION_QUEUE = [];
     let CURRENT_OBS_ID = null;
+	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
-    let API_BASE = "https://api.inaturalist.org/v1/observations?per_page=50&taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id&order=asc";
+    let API_BASE = "https://api.inaturalist.org/v1/observations?taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id&order=asc";
 
 let isPinned = false; 
 
@@ -352,7 +353,7 @@ function copyNarrativeToClipboard() {
         queueCountEl.innerText = " (Refilling buffer...)";
         try {
             const excludedIds = FINISHED_OBS_IDS.length > 0 ? `&not_id=${FINISHED_OBS_IDS.join(',')}` : '';
-            const filteredURL = `${API_BASE}&place_id=${CURRENT_PLACE_ID}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
+            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
             TOTAL_API_RESULTS = data.total_results || 0;
@@ -372,7 +373,7 @@ async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
     CURRENT_OBS_ID = obs.id;
-    document.getElementById('queue-count').innerText = `(${TOTAL_API_RESULTS} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
+    document.getElementById('queue-count').innerText = `  (${TOTAL_API_RESULTS+OBSERVATION_QUEUE.length-BATCH_SIZE} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
     //Capture the community taxon ID from the queue data	
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
@@ -1184,6 +1185,7 @@ function jumpToNextQuestion() {
 </body>
 
 </html>
+
 
 
 
