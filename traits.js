@@ -172,7 +172,7 @@ const traits = [
     {
         id: 'Parafacialwidthatleveloflunule',
         title: 'Parafacial width at level of lunule.',
-        weight: 4,
+        weight: 3,
         link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=179',
         options: [
             { 
@@ -192,16 +192,12 @@ const traits = [
         link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167',
         options: [
             { 
-                label: 'bright silvery (Whitworth 2014)', 
-                description: 'Parafacials are bright silvery (Whitworth 2014).' 
+                label: 'silvery (Whitworth 2014)', 
+                description: 'Parafacials are silvery (Whitworth 2014).' 
             },
             { 
                 label: 'orange (Whitworth 2014)', 
                 description: 'Parafacials are orange (Whitworth 2014).' 
-            },
-            { 
-                label: 'dark silvery (Whitworth 2014)', 
-                description: 'Parafacials are dark silvery (Whitworth 2014).' 
             }
 ]
 },
