@@ -995,7 +995,6 @@ function getFilteredFlies() {
                 }
                 narrative.push(`<br><br>Therefore, we can narrow this down to ${resultText}`);
             }
-            narrative.push(`<br><br>See tools at <a href="https://sites.google.com/view/flyguide/species-guides/calliphoridae">https://sites.google.com/view/flyguide/species-guides/calliphoridae</a>.`);
             summaryBox.innerHTML = narrative.join(" ");
         } else {
             summaryBox.innerHTML = "Select traits to generate description.";
@@ -1196,6 +1195,7 @@ function jumpToNextQuestion() {
 </body>
 
 </html>
+
 
 
 
