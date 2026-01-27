@@ -556,7 +556,7 @@ async function setCommunityTaxonStatus(taxonInfo) {
 
     const response = await fetch(`https://api.inaturalist.org/v1/observations/${COMM_CURRENT}`);
     const data = await response.json();
-    const latestCommunityID = data.results[0].taxon?.id;
+    const latestCommunityID = data.results[0].community_taxon_id;
 
     // Compare: Only vote if new ID matches existing community ID
     if (TAXON_OLD.rank !== "species" && latestCommunityID === TAXON_OLD.taxonId) {
@@ -940,7 +940,16 @@ function getFilteredFlies() {
                 const trait = traits.find(t => t.id === key);
                 if (trait) {
                     const selectedOption = trait.options.find(opt => opt.label === currentFilters[key]);
-                    if (selectedOption && selectedOption.description) narrative.push(selectedOption.description);
+                    if (selectedOption && selectedOption.description) {
+			let text = selectedOption.description;
+                
+			                // If a link exists, append a bracketed number that acts as the link
+			                if (trait.link) {
+			                    text += `<a href="${trait.link}" target="_blank" style="text-decoration:none; color:#2980b9; font-size: 0.85em; vertical-align: super; margin-left: 2px;">⁽ʳᵉᶠ⁾</a>`;
+			                }
+			                
+			                narrative.push(text);
+			}
                 }
             }
         });
