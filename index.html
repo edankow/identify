@@ -275,7 +275,7 @@ function copyNarrativeToClipboard() {
     const btn = document.getElementById('copy-narrative-btn');
     
     // We use .innerText to get the text without the HTML <strong> tags
-    const textToCopy = content.innerText;
+    const textToCopy = content.innerText.replace(/⁽ᵛⁱˢᵘᵃˡ⁾/g, '').trim();
 
     navigator.clipboard.writeText(textToCopy).then(() => {
         // Visual feedback that it worked
@@ -1195,6 +1195,7 @@ function jumpToNextQuestion() {
 </body>
 
 </html>
+
 
 
 
