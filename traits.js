@@ -1,7 +1,7 @@
 // Trait definitions
 // note that weight is straightforwardness from 10 to 10. e.g. region is weight 10.
 const traits = [
-    {
+        {
         id: 'Headlength',
         title: 'How long is head? (difficult to assess; character taken from Whitworth 2006)',
         weight: 2,
@@ -67,21 +67,17 @@ const traits = [
 },
     {
         id: 'Frontoorbitalplatesformaleswithnarrowfrons',
-        title: 'How widely separated are fronto-orbital plates?',
+        title: 'Are fronto-orbital plates separated?',
         weight: 5,
         link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=167',
         options: [
             { 
-                label: 'strongly separated. See figures in Jones et al. 2019, p.174, 180', 
-                description: 'The fronto-orbital plates are strongly separated. See figures in Jones et al. 2019, p.174, 180.' 
+                label: 'separated. See figures in Jones et al. 2019, p.167, 174, 180', 
+                description: 'The fronto-orbital plates are separated. See figures in Jones et al. 2019, p.167, 174, 180.' 
             },
             { 
                 label: 'almost touching. See figures in Jones et al. 2019, p.167, 174, 180', 
                 description: 'The fronto-orbital plates are almost touching. See figures in Jones et al. 2019, p.167, 174, 180.' 
-            },
-            { 
-                label: 'somewhat separated. See figures in Jones et al. 2019, p.167', 
-                description: 'The fronto-orbital plates are somewhat separated. See figures in Jones et al. 2019, p.167.' 
             }
 ]
 },
@@ -300,7 +296,7 @@ const traits = [
     {
         id: 'Palpscolor',
         title: 'Palps color.',
-        weight: 3,
+        weight: 2,
         link: 'https://cjai.biologicalsurvey.ca/wp-content/uploads/2021/01/jwm_39.pdf#page=144',
         options: [
             { 
@@ -485,15 +481,11 @@ const traits = [
         options: [
             { 
                 label: 'orange, yellow, or whitish', 
-                description: 'The basicosta is orange, yellow, or whitish.' 
+                description: 'The basicosta appears orange, yellow, or whitish.' 
             },
             { 
-                label: 'dark brown or black', 
-                description: 'The basicosta is dark brown or black.' 
-            },
-            { 
-                label: 'tan to orange-brown', 
-                description: 'The basicosta is tan to orange-brown.' 
+                label: 'brown or black', 
+                description: 'The basicosta appears brown or black.' 
             }
 ]
 },
@@ -542,6 +534,22 @@ const traits = [
             { 
                 label: 'with 1-2 pairs of long, erect median marginal setae (Whitworth 2006)', 
                 description: 'The posterior margin of tergite 3 with 1-2 pairs of long, erect median marginal setae (Whitworth 2006).' 
+            }
+]
+},
+    {
+        id: 'Tposteriorsetae',
+        title: 'Are the long setae on the posterior margin of tergite 4 erect or appressed?',
+        weight: 3,
+        link: '',
+        options: [
+            { 
+                label: 'erect', 
+                description: 'The long setae on the posterior margin of tergite 5 are erect.' 
+            },
+            { 
+                label: 'appressed', 
+                description: 'The long setae on the posterior margin of tergite 5 are appressed.' 
             }
 ]
 },

@@ -8,6 +8,18 @@
 </head>
 <body>
 
+<div id="modal-filters" class="modal">
+    <div class="modal-content">
+        <h3>Add Extra URL Filters</h3>
+        <p style="font-size: 0.8rem; color: #666;">Enter additional iNaturalist API parameters (e.g., <code>user_id=username</code> or <code>lrank=complex</code>).</p>
+        <input type="text" id="new-other-filters" placeholder="e.g. user_id=edanko">
+        <div style="display:flex; gap:10px;">
+            <button onclick="updateOtherFilters()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <div id="modal-location" class="modal">
     <div class="modal-content">
         <h3>Change Search Location</h3>
@@ -17,7 +29,7 @@
         <div id="location-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
     </div>
 
-        <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada). You can also enter other filters *after* the locality, e.g. "6712,1&user_id=edanko".</p>
+        <p style="font-size: 0.8rem; color: #666;">Or enter a comma-separated list of iNaturalist Place IDs (e.g., 6712,1 for USA & Canada).</p>
         <input type="text" id="new-place-id" placeholder="e.g. 6712,1">
         <div style="display:flex; gap:10px;">
             <button onclick="updateLocation()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
@@ -25,6 +37,22 @@
         </div>
     </div>
 </div>
+
+<div id="modal-taxon-filter" class="modal">
+    <div class="modal-content">
+        <h3>Change Target Taxon</h3>
+        <div style="position:relative; margin-bottom: 15px;">
+            <input type="text" id="filter-taxon-search-input" placeholder="Search for a taxon (e.g. Calliphoridae)..." oninput="searchFilterTaxa(this.value)" autocomplete="off">
+            <div id="filter-taxon-results-dropdown" style="position:absolute; width:100%; background:white; border:1px solid #ccc; max-height:200px; overflow-y:auto; z-index:100; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>
+        </div>
+        <input type="number" id="new-filter-taxon-id" placeholder="Taxon ID (e.g. 61858)">
+        <div style="display:flex; gap:10px;">
+            <button onclick="updateTaxonFilter()" class="btn-id" style="cursor: pointer; flex:1; padding:10px;">Update & Refresh</button>
+            <button onclick="closeModals()" class="btn-skip" style="cursor: pointer; flex:1; padding:10px;">Cancel</button>
+        </div>
+    </div>
+</div>
+
 
 <div id="modal-id" class="modal">
     <div class="modal-content">
@@ -61,7 +89,14 @@
 <div id="token-bar">
     <div>
         <span id="token-status"></span>
-			<button id="change-loc-btn" onclick="openLocationModal()" class="btn-toggle" style="margin-left: 10px; font-size: 0.7rem;">Change Location</button>
+	<div class="dropdown" tabindex="0">
+	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
+	    <div class="dropdown-content">
+	        <a href="#" onclick="event.preventDefault(); openTaxonFilterModal()">🪰 Change Taxon</a>
+	        <a href="#" onclick="event.preventDefault(); openLocationModal()">📍 Change Location</a>
+	        <a href="#" onclick="event.preventDefault(); openFiltersModal()">⚙️ URL Parameters</a>
+	    </div>
+	</div>
         <span id="queue-count" style="font-size: 0.8em; opacity: 0.8;"></span>
     </div>
 
@@ -127,9 +162,79 @@
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
     let CURRENT_PLACE_ID = "6712,1"; // Default: USA & Canada
+    let OTHER_FILTERS = ""; // Default other filters
     let API_BASE = "https://api.inaturalist.org/v1/observations?taxon_id=61858&only_id=false&fields=all&quality_grade=needs_id&order=asc";
 
 let isPinned = false; 
+
+let CURRENT_TAXON_ID = "61858"; // Default Lucilia ID
+
+function openFiltersModal() {
+    document.getElementById('modal-filters').style.display = 'flex';
+    document.getElementById('new-other-filters').value = OTHER_FILTERS;
+}
+
+function updateOtherFilters() {
+    const val = document.getElementById('new-other-filters').value.trim();
+    // Ensure it starts with & if not empty
+    OTHER_FILTERS = (val && !val.startsWith('&')) ? '&' + val : val;
+    
+    // Reset queue and refresh
+    OBSERVATION_QUEUE = []; 
+    FINISHED_OBS_IDS = [];
+    closeModals();
+    fetchObservations(); 
+}
+
+function openTaxonFilterModal() {
+    document.getElementById('modal-taxon-filter').style.display = 'flex';
+    document.getElementById('new-filter-taxon-id').value = CURRENT_TAXON_ID;
+}
+
+// Reusing your autocomplete logic but targeting the filter modal elements
+async function searchFilterTaxa(query) {
+    const dropdown = document.getElementById('filter-taxon-results-dropdown');
+    if (query.length < 3) { dropdown.style.display = 'none'; return; }
+
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch(`https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            if (data.results.length > 0) {
+                dropdown.innerHTML = data.results.map(t => `
+                    <div class="search-result-item" style="padding: 8px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 0.9rem;"
+                         onclick="selectFilterTaxon('${t.id}', '${t.name}')">
+                        <strong>${t.name}</strong> <small>(${t.rank || ''})</small>
+                    </div>
+                `).join('');
+                dropdown.style.display = 'block';
+            } else { dropdown.style.display = 'none'; }
+        } catch (e) { console.error("Taxon search failed", e); }
+    }, 300);
+}
+
+function selectFilterTaxon(id, name) {
+    document.getElementById('new-filter-taxon-id').value = id;
+    document.getElementById('filter-taxon-search-input').value = name;
+    document.getElementById('filter-taxon-results-dropdown').style.display = 'none';
+}
+
+function updateTaxonFilter() {
+    const newId = document.getElementById('new-filter-taxon-id').value.trim();
+    if (newId) {
+        CURRENT_TAXON_ID = newId;
+        // Update the API_BASE to reflect the new taxon ID
+        API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${CURRENT_TAXON_ID}&only_id=false&fields=all&quality_grade=needs_id&order=asc`;
+        
+        OBSERVATION_QUEUE = []; 
+        FINISHED_OBS_IDS = [];
+        closeModals();
+        fetchObservations(); 
+    }
+}
+
+
 
 function handleZoom(e) {
     const container = e.currentTarget;
@@ -219,15 +324,48 @@ if (common && common.length > 0) {
 }
 
     function openCommentModal() { document.getElementById('modal-comment').style.display = 'flex'; }
-    function closeModals() { 
-        document.getElementById('modal-id').style.display = 'none'; 
-        document.getElementById('modal-comment').style.display = 'none'; 
-        document.getElementById('modal-location').style.display = 'none';
-        document.getElementById('taxon-search-input').value = '';
-        document.getElementById('search-results-dropdown').style.display = 'none';
-        document.getElementById('manual-taxon-id').value = '';
+   
+
+
+function closeModals() {
+    // --- 1. ID and Comment Modals ---
+    const modalId = document.getElementById('modal-id');
+    if (modalId) modalId.style.display = 'none';
+    
+    const modalComment = document.getElementById('modal-comment');
+    if (modalComment) modalComment.style.display = 'none';
+
+    // Reset ID search fields
+    const taxonSearch = document.getElementById('taxon-search-input');
+    if (taxonSearch) taxonSearch.value = '';
+    
+    const searchDropdown = document.getElementById('search-results-dropdown');
+    if (searchDropdown) searchDropdown.style.display = 'none';
+    
+    const manualId = document.getElementById('manual-taxon-id');
+    if (manualId) manualId.value = '';
+
+
+    // --- 2. Location Modal ---
+    const locationModal = document.getElementById('modal-location');
+    if (locationModal) locationModal.style.display = 'none';
+
+
+    // --- 3. Taxon Filter Modal  ---
+    const taxonFilterModal = document.getElementById('modal-taxon-filter');
+    if (taxonFilterModal) {
+        taxonFilterModal.style.display = 'none';
+        document.getElementById('filter-taxon-search-input').value = '';
+        document.getElementById('filter-taxon-results-dropdown').style.display = 'none';
     }
 
+
+    // --- 4. Other Filters Modal (the third button) ---
+    const filtersModal = document.getElementById('modal-filters');
+    if (filtersModal) {
+        filtersModal.style.display = 'none';
+    }
+}
 
     async function submitManualID() {
         const tId = document.getElementById('manual-taxon-id').value;
@@ -275,7 +413,7 @@ function copyNarrativeToClipboard() {
     const btn = document.getElementById('copy-narrative-btn');
     
     // We use .innerText to get the text without the HTML <strong> tags
-    const textToCopy = content.innerText.replace(/⁽ᵛⁱˢᵘᵃˡ⁾/g, '').trim();
+    const textToCopy = content.innerText.replace(/⁽ᶠⁱᵍᵘʳᵉˢ⁾/g, '').trim();
 
     navigator.clipboard.writeText(textToCopy).then(() => {
         // Visual feedback that it worked
@@ -352,7 +490,7 @@ function copyNarrativeToClipboard() {
         queueCountEl.innerText = " (Refilling buffer...)";
         try {
             const excludedIds = FINISHED_OBS_IDS.length > 0 ? `&not_id=${FINISHED_OBS_IDS.join(',')}` : '';
-            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
+            const filteredURL = `${API_BASE}&per_page=${BATCH_SIZE}&place_id=${CURRENT_PLACE_ID}${OTHER_FILTERS}&viewer_id=${MY_USER_ID}&reviewed=false&without_ident_user_id=${MY_USER_ID}${excludedIds}`;
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
             TOTAL_API_RESULTS = data.total_results || 0;
@@ -372,7 +510,7 @@ async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
     CURRENT_OBS_ID = obs.id;
-    document.getElementById('queue-count').innerText = `  (${TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
+    document.getElementById('queue-count').innerText = `  (${1+TOTAL_API_RESULTS + OBSERVATION_QUEUE.length - Math.min(BATCH_SIZE, TOTAL_API_RESULTS)} observations)`; // ${OBSERVATION_QUEUE.length} buffered not shown
     //Capture the community taxon ID from the queue data	
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
@@ -440,7 +578,15 @@ function autoSetRegionFromLocality(terms) {
                             const card = this.closest('.card');
                             const largeUrl = '${p.photo.url.replace("square", "large")}';
                             const origUrl = '${p.photo.url.replace("square", "original")}';
+
+
+				const img = card.querySelector('.main-photo');
+				const container = card.querySelector('.img-container');
                             card.querySelector('.main-photo').src = largeUrl;
+				container.dataset.zoomState = 'none';
+				container.classList.remove('zoomed-active', 'zoomed-pinned');
+				img.style.transformOrigin = 'center center';
+
                             this.parentElement.querySelectorAll('img').forEach(i => i.style.borderColor = 'transparent');
                             this.style.borderColor = '#2980b9';
                          ">
@@ -467,7 +613,7 @@ function autoSetRegionFromLocality(terms) {
                 user: i.user.login, 
                 // If there's no body text, we show a default status message
                 body: i.body && i.body.trim() !== "" ? i.body : "added an identification.", 
-                taxonName: i.taxon?.preferred_common_name || i.taxon?.name,
+                taxonName: i.taxon?.name || "Unknown Taxon",
                 type: 'id'
             })),
             ...(obs.comments || []).map(c => ({ 
@@ -495,8 +641,13 @@ function autoSetRegionFromLocality(terms) {
           <div class="card-content-split">
                     <div class="info">
                         <a href="https://www.inaturalist.org/observations/${obs.id}" target="_blank" style="text-decoration:none; color:inherit;">
-                            <h2 style="margin:0; font-size:1.2rem;">${obs.taxon?.preferred_common_name || "Unknown"}</h2>
-			    <style="color:#666; font-size:0.8rem;">${obs.taxon?.rank && obs.taxon.rank !== 'species' ? obs.taxon.rank.charAt(0).toUpperCase() + obs.taxon.rank.slice(1) + ' ' : ''}<i>${obs.taxon?.name || "Unknown"}</i></style>
+                            <h2 style="margin:0; font-size:1.2rem;">
+				    ${obs.taxon?.rank && obs.taxon.rank !== 'species' ? obs.taxon.rank.charAt(0).toUpperCase() + obs.taxon.rank.slice(1) + ' ' : ''}
+				    <i>${obs.taxon?.name || "Unknown"}</i>
+				</h2>
+				<div style="color:#666; font-size:0.8rem;">
+				    ${obs.taxon?.preferred_common_name || ""}
+				</div>
                         </a>
 		      <div class="obs-date" style="font-size:0.75rem; color:#555; margin-top:4px;">
 		        <strong>DATE:</strong> ${formattedDate}
@@ -517,7 +668,7 @@ function autoSetRegionFromLocality(terms) {
                     ? allDiscussion.map(item => `
                          <div class="comment-item" style="margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px;">
                             <strong>${item.user}</strong> 
-                            ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: ${item.taxonName}]</span>` : ''}: 
+                            ${item.type === 'id' ? `<span style="color:#2980b9; font-weight:bold;"> [ID: <i>${item.taxonName}</i>]</span>` : ''}: 
                             <span style="${item.type === 'id' && item.body === 'added an identification.' ? 'font-style: italic; color: #888;' : ''}">
                                 ${item.body}
                             </span>
@@ -945,7 +1096,7 @@ function getFilteredFlies() {
                 
 			                // If a link exists, append a bracketed number that acts as the link
 			                if (trait.link) {
-			                    text += `<a href="${trait.link}" target="_blank" style="text-decoration:none; color:#2980b9; font-size: 0.85em; vertical-align: super; margin-left: 2px;">⁽ᵛⁱˢᵘᵃˡ⁾</a>`;
+			                    text += `<a href="${trait.link}" target="_blank" style="text-decoration:none; color:#2980b9; font-size: 0.85em; vertical-align: super; margin-left: 2px;">⁽ᶠⁱᵍᵘʳᵉˢ⁾</a>`;
 			                }
 			                
 			                narrative.push(text);
@@ -1155,6 +1306,8 @@ function jumpToNextQuestion() {
         selectQuestion(sortedRemaining[0].id);
     }
 }
+
+
 
 
 </script>

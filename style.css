@@ -407,7 +407,50 @@ body.wide-layout .summary-box {
 }
 
 
+/* Dropdown Container */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0; /* Aligns to the right of the button */
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1001;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #eee;
+}
+
+/* Change color on hover */
+.dropdown-content a:hover { background-color: #f1f1f1; }
+
+/* Show the menu on hover */
+.dropdown:hover .dropdown-content { display: block; }
+
+/* Change button color when menu is visible */
+.dropdown:hover .btn-toggle { background-color: #444; }
+
 
         .hidden { display: none !important; }
         .breadcrumb-container { background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px; font-size: 0.8rem; }
         .breadcrumb-active { font-weight: bold; color: var(--accent); }
+
+.dropdown:active .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+    display: block;
+}
