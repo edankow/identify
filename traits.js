@@ -1,7 +1,7 @@
 // Trait definitions
 // note that weight is straightforwardness from 10 to 10. e.g. region is weight 10.
 const traits = [
-        {
+            {
         id: 'Headlength',
         title: 'How long is head? (difficult to assess; character taken from Whitworth 2006)',
         weight: 2,
@@ -66,6 +66,22 @@ const traits = [
 ]
 },
     {
+        id: 'Fronswidthatnarrowestabout',
+        title: 'Frons more than 25% of head width?',
+        weight: 4,
+        link: 'https://edankow.github.io/lucilia_us_canada.pdf#page=7',
+        options: [
+            { 
+                label: 'less than 25% head width', 
+                description: 'The frons at narrowest is less than 25% head width.' 
+            },
+            { 
+                label: 'at least 25% of head width', 
+                description: 'The frons at narrowest is at least 25% of head width.' 
+            }
+]
+},
+    {
         id: 'Frontoorbitalplatesformaleswithnarrowfrons',
         title: 'Are fronto-orbital plates separated?',
         weight: 5,
@@ -82,38 +98,18 @@ const traits = [
 ]
 },
     {
-        id: 'Fronswidthatnarrowestformales',
+        id: 'fronswidthvssericatamale',
         title: 'Round or estimate frons width at narrowest (skip if ambiguous)',
         weight: 3,
         link: 'https://edankow.github.io/lucilia_us_canada.pdf#page=9',
         options: [
             { 
-                label: 'about 20% head width', 
-                description: 'The frons at narrowest is about 20% head width.' 
+                label: 'at least about 12% head width', 
+                description: 'The frons at narrowest is at least about 12% head width.' 
             },
             { 
-                label: 'at least 30% head width', 
-                description: 'The frons at narrowest is at least 30% head width.' 
-            },
-            { 
-                label: 'about 13% head width', 
-                description: 'The frons at narrowest is about 13% head width.' 
-            },
-            { 
-                label: 'about 8% head width', 
-                description: 'The frons at narrowest is about 8% head width.' 
-            },
-            { 
-                label: 'about 5% head width', 
-                description: 'The frons at narrowest is about 5% head width.' 
-            },
-            { 
-                label: 'about 1% head width', 
-                description: 'The frons at narrowest is about 1% head width.' 
-            },
-            { 
-                label: 'about 3% head width', 
-                description: 'The frons at narrowest is about 3% head width.' 
+                label: 'at most about 10% head width', 
+                description: 'The frons at narrowest is at most about 10% head width.' 
             }
 ]
 },
