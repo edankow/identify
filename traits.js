@@ -99,7 +99,7 @@ const traits = [
 },
     {
         id: 'fronswidthvssericatamale',
-        title: 'Round or estimate frons width at narrowest (skip if ambiguous)',
+        title: 'Frons width more than 10% at narrowest? (skip if ambiguous)',
         weight: 3,
         link: 'https://edankow.github.io/lucilia_us_canada.pdf#page=9',
         options: [
@@ -651,3 +651,4 @@ const traits = [
 }
 
 ];
+
