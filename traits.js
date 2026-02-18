@@ -5,7 +5,7 @@ const traits = [
         id: 'Headlength',
         title: 'How long is head? (difficult to assess; character taken from Whitworth 2006)',
         weight: 2,
-        link: 'identify/lucilia_us_canada.pdf#page=17',
+        link: '/lucilia_us_canada.pdf#page=17',
         options: [
             { 
                 label: 'Head shorter; length of head at level of lunule less than half head height (Whitworth 2006)', 
@@ -21,7 +21,7 @@ const traits = [
         id: 'Fronsnarrowing',
         title: 'Frons shape (to separate males and females)',
         weight: 9,
-        link: 'identify/lucilia_us_canada.pdf#page=5',
+        link: '/lucilia_us_canada.pdf#page=5',
         options: [
             { 
                 label: 'conspicuously narrowed above antennal bases', 
@@ -37,7 +37,7 @@ const traits = [
         id: 'FronswidthatnarrowesttohelpIDmales',
         title: 'Frons more than 7% of head?',
         weight: 5,
-        link: 'identify/lucilia_us_canada.pdf#page=9',
+        link: '/lucilia_us_canada.pdf#page=9',
         options: [
             { 
                 label: 'at least 7% of the head width', 
@@ -53,7 +53,7 @@ const traits = [
         id: 'FronswidthatnarrowesttohelpIDfemales',
         title: 'Frons more than 35% of head width?',
         weight: 3,
-        link: 'identify/lucilia_us_canada.pdf#page=11',
+        link: '/lucilia_us_canada.pdf#page=11',
         options: [
             { 
                 label: 'less than 35% head width', 
@@ -69,7 +69,7 @@ const traits = [
         id: 'Fronswidthatnarrowestabout',
         title: 'Frons more than 25% of head width?',
         weight: 4,
-        link: 'identify/lucilia_us_canada.pdf#page=7',
+        link: '/lucilia_us_canada.pdf#page=7',
         options: [
             { 
                 label: 'less than 25% head width', 
@@ -101,7 +101,7 @@ const traits = [
         id: 'fronswidthvssericatamale',
         title: 'Frons width more than 10% at narrowest? (skip if ambiguous)',
         weight: 3,
-        link: 'identify/lucilia_us_canada.pdf#page=9',
+        link: '/lucilia_us_canada.pdf#page=9',
         options: [
             { 
                 label: 'at least about 12% head width', 
@@ -117,7 +117,7 @@ const traits = [
         id: 'fronswidthvscuprinamale',
         title: 'Frons more than 15% of head width?',
         weight: 5,
-        link: 'identify/lucilia_us_canada.pdf#page=9',
+        link: '/lucilia_us_canada.pdf#page=9',
         options: [
             { 
                 label: 'at least about 20% head width', 
@@ -149,7 +149,7 @@ const traits = [
         id: 'IVSorientation',
         title: 'Do inner vertical setae converge?',
         weight: 2,
-        link: 'identify/lucilia_us_canada.pdf#page=30',
+        link: '/lucilia_us_canada.pdf#page=30',
         options: [
             { 
                 label: 'nearly parallel in dorsal view', 
@@ -309,7 +309,7 @@ const traits = [
         id: 'Bodycolor',
         title: 'Color of thorax or abdomen? (unreliable for dead flies)',
         weight: 5,
-        link: 'identify/lucilia_us_canada.pdf#page=27',
+        link: '/lucilia_us_canada.pdf#page=27',
         options: [
             { 
                 label: 'coppery brown', 
@@ -409,7 +409,7 @@ const traits = [
         id: 'acrostichalspostsutural',
         title: '# of post-sutural acrostichal pairs.',
         weight: 7,
-        link: 'identify/lucilia_us_canada.pdf#page=19',
+        link: '/lucilia_us_canada.pdf#page=19',
         options: [
             { 
                 label: 'three', 
@@ -473,7 +473,7 @@ const traits = [
         id: 'Basicostacolor',
         title: 'What color is the basicosta? (sometimes ambiguous, see notes)',
         weight: 4,
-        link: 'identify/lucilia_us_canada.pdf#page=21',
+        link: '/lucilia_us_canada.pdf#page=21',
         options: [
             { 
                 label: 'orange, yellow, or whitish', 
@@ -651,6 +651,7 @@ const traits = [
 }
 
 ];
+
 
 
 
