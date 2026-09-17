@@ -103,6 +103,17 @@
     </div>
 </div>
 
+<div id="modal-focused-group-complete" class="modal" role="dialog" aria-modal="true" aria-labelledby="focused-group-complete-title">
+    <div class="modal-content" style="text-align:left;">
+        <h3 id="focused-group-complete-title" style="margin:0;">Focused group complete</h3>
+        <p style="margin:0; color:#444;">No more observations were found in this focused group.</p>
+        <div style="display:flex; gap:10px;">
+            <button id="next-focused-group-button" type="button" onclick="continueToNextFocusedGroup()" class="btn-id" style="cursor:pointer; flex:1; padding:10px;">Next Focused Group</button>
+            <button type="button" onclick="closeFocusedGroupCompleteModal()" class="btn-skip" style="cursor:pointer; flex:1; padding:10px;">Close</button>
+        </div>
+    </div>
+</div>
+
 <div id="modal-post-confirmation" class="modal">
     <div class="modal-content" style="text-align:left;">
         <div class="post-confirm-heading">
@@ -144,7 +155,7 @@
 	    <button class="btn-toggle" style="font-size: 0.7rem;">Change Filters ▼</button>
 	    <div class="dropdown-content">
 		<div class="focused-group-menu-row">
-			<a href="#" onclick="event.preventDefault(); searchBoundaryObservation()">🔍 Start with a Focused Group</a>
+			<a id="focused-group-link" href="#" onclick="event.preventDefault(); searchBoundaryObservation()">🔍 Start with a Focused Group</a>
 			<button type="button" onclick="copyFocusedGroupStarterLink(event)" title="Copy a bookmarkable focused-group starter link" aria-label="Copy a bookmarkable focused-group starter link">📋</button>
 		</div>
 	        <a href="#" id="identify-own-observations-link" onclick="event.preventDefault(); toggleIdentifyOwnObservations()">👤 Go Thru My Observations</a>
@@ -323,6 +334,19 @@ let CURRENT_TAXON_ID = window.DEFAULT_TAXON; // Default taxon ID
 let IDENTIFY_OWN_OBSERVATIONS = false;
 let UNREVIEWED_QUEUE_FILTERS = null;
 let AUTO_START_FOCUSED_GROUP = false;
+let FOCUSED_GROUP_ACTIVE = false;
+let FOCUSED_GROUP_SOURCE = null;
+
+function setFocusedGroupActive(isActive, source = null) {
+    FOCUSED_GROUP_ACTIVE = isActive;
+    FOCUSED_GROUP_SOURCE = isActive ? (source || FOCUSED_GROUP_SOURCE || 'button') : null;
+    const link = document.getElementById('focused-group-link');
+    if (link) {
+        link.textContent = isActive
+            ? '🔍 Next Focused Group'
+            : '🔍 Start with a Focused Group';
+    }
+}
 
 function refreshObservationApiBase() {
     API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${encodeURIComponent(CURRENT_TAXON_ID)}&only_id=false&fields=all`;
@@ -370,6 +394,7 @@ function loadFiltersFromURL() {
         : '';
     const filterParams = savedSearch ? new URLSearchParams(savedSearch) : params;
     AUTO_START_FOCUSED_GROUP = filterParams.get('focused_group') === 'true';
+    FOCUSED_GROUP_SOURCE = AUTO_START_FOCUSED_GROUP ? 'url' : null;
     IDENTIFY_OWN_OBSERVATIONS = filterParams.get('own_observations') === 'true';
     CURRENT_TAXON_ID = filterParams.get('taxon_id') || window.DEFAULT_TAXON;
     CURRENT_PLACE_ID = filterParams.get('place_id') || window.DEFAULT_PLACE_ID;
@@ -448,6 +473,7 @@ function toggleIdentifyOwnObservations() {
         }
     }
     refreshObservationApiBase();
+    setFocusedGroupActive(false);
     updateIdentifyOwnObservationsLink();
     updateBookmarkURL();
     OBSERVATION_QUEUE = [];
@@ -471,6 +497,7 @@ function updateOtherFilters() {
     const val = document.getElementById('new-other-filters').value.trim();
     // Ensure it starts with & if not empty
     OTHER_FILTERS = (val && !val.startsWith('&')) ? '&' + val : val;
+    setFocusedGroupActive(false);
     updateBookmarkURL();
     
     // Reset queue and refresh
@@ -518,6 +545,7 @@ function updateTaxonFilter() {
     const newId = document.getElementById('new-filter-taxon-id').value.trim();
     if (newId) {
         CURRENT_TAXON_ID = newId;
+        setFocusedGroupActive(false);
         // Rebuild the observation endpoint with the selected taxon.
         refreshObservationApiBase();
         updateBookmarkURL();
@@ -809,12 +837,30 @@ function closeModals() {
     const welcomeModal = document.getElementById('modal-welcome');
     if (welcomeModal) welcomeModal.style.display = 'none';
 
+    const focusedGroupCompleteModal = document.getElementById('modal-focused-group-complete');
+    if (focusedGroupCompleteModal) focusedGroupCompleteModal.style.display = 'none';
+
     window.revealDatasetChooser?.();
 }
 
 function openWelcomeModal() {
     window.hideDatasetChooser?.();
     document.getElementById('modal-welcome').style.display = 'flex';
+}
+
+function openFocusedGroupCompleteModal() {
+    const modal = document.getElementById('modal-focused-group-complete');
+    modal.style.display = 'flex';
+    document.getElementById('next-focused-group-button').focus();
+}
+
+function closeFocusedGroupCompleteModal() {
+    document.getElementById('modal-focused-group-complete').style.display = 'none';
+}
+
+function continueToNextFocusedGroup() {
+    closeFocusedGroupCompleteModal();
+    searchBoundaryObservation();
 }
 
 function showWelcomeModalOnce() {
@@ -983,7 +1029,11 @@ function copyNarrativeToClipboard() {
                 showNextFromQueue();
             } else {
                 queueCountEl.innerText = " (No more observations found)";
-		alert("No more observations found");
+		if (FOCUSED_GROUP_ACTIVE) {
+                    openFocusedGroupCompleteModal();
+                } else {
+                    alert("No more observations found");
+                }
             }
         } catch (error) {
             queueCountEl.innerText = " (Error loading data)";
@@ -2554,7 +2604,7 @@ function escapeRegionString(value) {
             updateStatusUI().then(() => {
                 if (!MY_USER_ID) return;
                 if (AUTO_START_FOCUSED_GROUP) {
-                    searchBoundaryObservation();
+                    searchBoundaryObservation('url');
                 } else {
                     fetchObservations();
                 }
@@ -2613,6 +2663,7 @@ function updateLocation() {
     const newId = document.getElementById('new-place-id').value.trim();
     if (newId) {
         CURRENT_PLACE_ID = newId;
+        setFocusedGroupActive(false);
         updateBookmarkURL();
         OBSERVATION_QUEUE = []; // Clear current buffer
         FINISHED_OBS_IDS = [];  // Restart exclusion tracking for the new location.
@@ -2849,7 +2900,8 @@ async function generateCodeChallenge(verifier) {
 
 // Find the oldest observation needing identification, then focus the queue on
 // observations with its taxon, rank, and state or province.
-async function searchBoundaryObservation() {
+async function searchBoundaryObservation(source = FOCUSED_GROUP_SOURCE || 'button') {
+    FOCUSED_GROUP_SOURCE = source;
     try {
         // A focused-group search is a fresh unreviewed search. Do not inherit
         // "my observations" mode or custom URL filters from the current queue.
@@ -2944,6 +2996,7 @@ async function searchBoundaryObservation() {
         OTHER_FILTERS = cleanedFilters + 
              `&rank=${encodeURIComponent(taxonRank)}` +"&order=asc";
 
+        setFocusedGroupActive(true, source);
         updateBookmarkURL();
 
         OBSERVATION_QUEUE = [];
