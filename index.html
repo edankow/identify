@@ -957,7 +957,7 @@ function copyNarrativeToClipboard() {
         }
     }
 
-    async function fetchObservations() {
+    async function fetchObservations(focusedCountyId = null) {
         if (!MY_USER_ID) { await updateStatusUI(); if (!MY_USER_ID) return; }
         if (OBSERVATION_QUEUE.length > 0) { showNextFromQueue(); return; }
         const queueCountEl = document.getElementById('queue-count');
@@ -968,6 +968,16 @@ function copyNarrativeToClipboard() {
             const response = await fetch(filteredURL, { headers: { "Authorization": `Bearer ${MY_TOKEN}` } });
             const data = await response.json();
             TOTAL_API_RESULTS = data.total_results || 0;
+
+            // A focused-group search starts at the state/province level. If
+            // that group is too large, discard this batch and refill once at
+            // the boundary observation's county level instead.
+            if (focusedCountyId && TOTAL_API_RESULTS > 300) {
+                CURRENT_PLACE_ID = focusedCountyId;
+                updateBookmarkURL();
+                return fetchObservations();
+            }
+
             if (data.results?.length > 0) {
                 OBSERVATION_QUEUE = data.results;
                 showNextFromQueue();
@@ -2934,33 +2944,12 @@ async function searchBoundaryObservation() {
         OTHER_FILTERS = cleanedFilters + 
              `&rank=${encodeURIComponent(taxonRank)}` +"&order=asc";
 
-        // Very large state-level groups are unwieldy. Check the size before
-        // loading the queue and, when possible, focus one level further on the
-        // boundary observation's county.
-        const stateGroupURL =
-            `${API_BASE}` +
-            `&per_page=1` +
-            `&place_id=${encodeURIComponent(statePlace.id)}` +
-            `${getQueueSearchFilters()}` +
-            `${getAccountQueueFilters()}` +
-            `${excludedIds}`;
-        const stateGroupResponse = await fetch(stateGroupURL, {
-            headers: {
-                Authorization: `Bearer ${MY_TOKEN}`
-            }
-        });
-        const stateGroupData = await stateGroupResponse.json();
-
-        if ((stateGroupData.total_results || 0) > 300 && countyPlace) {
-            CURRENT_PLACE_ID = countyPlace.id;
-        }
-
         updateBookmarkURL();
 
         OBSERVATION_QUEUE = [];
         FINISHED_OBS_IDS = [];
 
-        fetchObservations();
+        fetchObservations(countyPlace?.id || null);
 
     } catch (error) {
         console.error("Boundary search failed:", error);
