@@ -1035,15 +1035,19 @@ function copyNarrativeToClipboard() {
                 OBSERVATION_QUEUE = data.results;
                 await showNextFromQueue();
             } else {
-                queueCountEl.innerText = " (No more observations found)";
-		if (FOCUSED_GROUP_ACTIVE) {
-                    openFocusedGroupCompleteModal();
-                } else {
-                    alert("No more observations found");
-                }
+                showQueueComplete();
             }
         } catch (error) {
             queueCountEl.innerText = " (Error loading data)";
+        }
+    }
+
+    function showQueueComplete() {
+        document.getElementById('queue-count').innerText = " (No more observations found)";
+        if (FOCUSED_GROUP_ACTIVE) {
+            openFocusedGroupCompleteModal();
+        } else {
+            alert("No more observations found");
         }
     }
 
@@ -1163,7 +1167,10 @@ async function showNextFromQueue() {
         }
         return;
     }
-    if (OBSERVATION_QUEUE.length === 0) { return fetchObservations(); }
+    if (OBSERVATION_QUEUE.length === 0) {
+        if (TOTAL_API_RESULTS <= BATCH_SIZE) return showQueueComplete();
+        return fetchObservations();
+    }
     const obs = OBSERVATION_QUEUE.shift();
     rememberPreviousObservation();
     HISTORY_NAVIGATION_BUSY = true;
