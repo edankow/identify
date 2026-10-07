@@ -311,6 +311,7 @@
     let MY_TOKEN = localStorage.getItem('inat_token') || "";
     let FINISHED_OBS_IDS = [];
     let OBSERVATION_QUEUE = [];
+    const PREFETCHED_OBSERVATIONS = new WeakMap();
     let CURRENT_OBS_ID = null;
 	let PENDING_IMMEDIATE_ID = null;
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
@@ -1040,9 +1041,42 @@ function copyNarrativeToClipboard() {
         }
     }
 
+function prepareObservation(obs) {
+    if (PREFETCHED_OBSERVATIONS.has(obs)) return PREFETCHED_OBSERVATIONS.get(obs);
+
+    const placePromise = (async () => {
+        let geoHierarchy = "Location Unknown";
+        let locationTerms = [];
+        if (obs.place_ids?.length > 0) {
+            try {
+                const response = await fetch(`https://api.inaturalist.org/v1/places/${obs.place_ids.join(',')}`);
+                if (!response.ok) throw new Error(`Place lookup returned ${response.status}`);
+                const data = await response.json();
+                const places = data.results.filter(p => [0, 10, 20].includes(p.admin_level));
+                locationTerms = places.map(p => p.name);
+                geoHierarchy = places.sort((a, b) => a.admin_level - b.admin_level).map(p => p.name).join(' » ');
+            } catch (error) {
+                console.error("Place fetch failed", error);
+            }
+        }
+        return { geoHierarchy, locationTerms };
+    })();
+
+    const images = (obs.observation_photos || []).map((entry, index) => {
+        const photo = new Image();
+        photo.src = index === 0 ? entry.photo.url.replace("square", "large") : entry.photo.url;
+        return photo;
+    });
+    const prepared = { placePromise, images };
+    PREFETCHED_OBSERVATIONS.set(obs, prepared);
+    return prepared;
+}
+
 async function showNextFromQueue() {
     if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
     const obs = OBSERVATION_QUEUE.shift();
+    const prepared = prepareObservation(obs);
+    if (OBSERVATION_QUEUE.length > 0) prepareObservation(OBSERVATION_QUEUE[0]);
     setIdentificationShortcutsReady(false);
     // Every observation starts with a clean identification matrix. Location is
     // applied for the new record below after its place hierarchy is fetched.
@@ -1054,22 +1088,8 @@ async function showNextFromQueue() {
     // Capture the community taxon ID from the queue data.
     CURRENT_COMMUNITY_ID = obs.taxon?.id || null;
 
-    let geoHierarchy = "Location Unknown";
-    let locationTerms = [];
-
-    if (obs.place_ids?.length > 0) {
-        try {
-            // Resolve place IDs to names used for automatic region selection.
-            const pRes = await fetch(`https://api.inaturalist.org/v1/places/${obs.place_ids.join(',')}`);
-            const pData = await pRes.json();
-            
-            // We want the names of countries (admin 0), states (10), and counties (20)
-            const places = pData.results.filter(p => [0, 10, 20].includes(p.admin_level));
-            locationTerms = places.map(p => p.name);
-            geoHierarchy = places.sort((a,b) => a.admin_level - b.admin_level).map(p => p.name).join(' » ');
-            
-        } catch (e) { console.error("Place fetch failed", e); }
-    }
+    const { geoHierarchy, locationTerms } = await prepared.placePromise;
+    if (CURRENT_OBS_ID !== obs.id) return;
 
     const regionWasApplied = autoSetRegionFromLocality(locationTerms);
     setIdentificationShortcutsReady(regionWasApplied);
