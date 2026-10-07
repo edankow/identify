@@ -1322,7 +1322,6 @@ function autoSetRegionFromLocality(terms) {
                         <div class="geo-hierarchy"><span style="font-size:0.7em; font-weight:bold;">LOCALITY:</span><br>${geoHierarchy}</div>
                     </div>
                     <div class="btn-group">
-			${OBSERVATION_FORWARD.length ? '<button class="btn-action" onclick="showNextFromQueue()">NEXT</button>' : ''}
 			<button class="btn-post" data-post-id-label onclick="postImmediateID()" title="Post the matrix ID. When needed, this also adds the diagnostic narrative and marks a matching non-species community ID as complete.">${getPostIdButtonLabel()}</button>
                         <button class="btn-id" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="sendIdentification(${obs.id}, ${obs.taxon?.id});excludeAndNext(${obs.id});">AGREE & NEXT</button>
 			<button class="btn-action" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='brightness(1)'" onclick="openIDModal()">ADD OTHER ID & NEXT</button>
