@@ -312,6 +312,7 @@
     let FINISHED_OBS_IDS = [];
     let OBSERVATION_QUEUE = [];
     const PREFETCHED_OBSERVATIONS = new WeakMap();
+    const PLACE_DETAILS = new Map();
     let CURRENT_OBS_ID = null;
 	let PENDING_IMMEDIATE_ID = null;
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
@@ -1041,6 +1042,27 @@ function copyNarrativeToClipboard() {
         }
     }
 
+function getPlaceDetails(placeIds) {
+    const ids = [...new Set(placeIds.map(String))];
+    const missingIds = ids.filter(id => !PLACE_DETAILS.has(id));
+    if (missingIds.length > 0) {
+        const batch = fetch(`https://api.inaturalist.org/v1/places/${missingIds.join(',')}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`Place lookup returned ${response.status}`);
+                return response.json();
+            })
+            .then(data => new Map(data.results.map(place => [String(place.id), place])));
+        missingIds.forEach(id => {
+            const lookup = batch.then(places => places.get(id) || null).catch(error => {
+                PLACE_DETAILS.delete(id); // Allow a later observation to retry a failed lookup.
+                throw error;
+            });
+            PLACE_DETAILS.set(id, lookup);
+        });
+    }
+    return Promise.all(ids.map(id => PLACE_DETAILS.get(id)));
+}
+
 function prepareObservation(obs) {
     if (PREFETCHED_OBSERVATIONS.has(obs)) return PREFETCHED_OBSERVATIONS.get(obs);
 
@@ -1049,10 +1071,8 @@ function prepareObservation(obs) {
         let locationTerms = [];
         if (obs.place_ids?.length > 0) {
             try {
-                const response = await fetch(`https://api.inaturalist.org/v1/places/${obs.place_ids.join(',')}`);
-                if (!response.ok) throw new Error(`Place lookup returned ${response.status}`);
-                const data = await response.json();
-                const places = data.results.filter(p => [0, 10, 20].includes(p.admin_level));
+                const details = await getPlaceDetails(obs.place_ids);
+                const places = details.filter(p => p && [0, 10, 20].includes(p.admin_level));
                 locationTerms = places.map(p => p.name);
                 geoHierarchy = places.sort((a, b) => a.admin_level - b.admin_level).map(p => p.name).join(' » ');
             } catch (error) {
