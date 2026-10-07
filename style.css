@@ -120,6 +120,25 @@
 
 .observation-photo-frame { position: relative; }
 
+.observation-loading-status {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 21;
+    transform: translate(-50%, -50%);
+    padding: 10px 16px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.82);
+    color: white;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.navigation-loading .observation-loading-status { display: block; }
+.navigation-loading .observation-nav-button { cursor: progress; opacity: 0.6; }
+.navigation-loading .img-container, .navigation-loading .img-container * { cursor: progress !important; }
+
 .observation-nav-button {
     position: absolute;
     top: 50%;

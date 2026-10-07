@@ -316,6 +316,7 @@
     const OBSERVATION_HISTORY = [];
     const OBSERVATION_FORWARD = [];
     let HISTORY_NAVIGATION_BUSY = false;
+    let NAVIGATION_LOADING = false;
     let CURRENT_OBS_ID = null;
 	let PENDING_IMMEDIATE_ID = null;
 	let SKIP_POST_REVIEW_FOR_SESSION = false;
@@ -1032,7 +1033,7 @@ function copyNarrativeToClipboard() {
 
             if (data.results?.length > 0) {
                 OBSERVATION_QUEUE = data.results;
-                showNextFromQueue();
+                await showNextFromQueue();
             } else {
                 queueCountEl.innerText = " (No more observations found)";
 		if (FOCUSED_GROUP_ACTIVE) {
@@ -1102,6 +1103,23 @@ function rememberPreviousObservation() {
     if (OBSERVATION_HISTORY.length > 10) OBSERVATION_HISTORY.shift();
 }
 
+async function navigateObservation(direction, obsId) {
+    if (HISTORY_NAVIGATION_BUSY || NAVIGATION_LOADING) return;
+    NAVIGATION_LOADING = true;
+    const frame = document.querySelector('.observation-photo-frame');
+    frame?.classList.add('navigation-loading');
+    try {
+        if (direction === 'previous') {
+            await showPreviousObservation();
+        } else {
+            await excludeAndNext(obsId);
+        }
+    } finally {
+        frame?.classList.remove('navigation-loading');
+        NAVIGATION_LOADING = false;
+    }
+}
+
 async function fetchObservationById(id) {
     const response = await fetch(`https://api.inaturalist.org/v1/observations/${id}?fields=all`, {
         headers: { "Authorization": `Bearer ${MY_TOKEN}` }
@@ -1145,7 +1163,7 @@ async function showNextFromQueue() {
         }
         return;
     }
-    if (OBSERVATION_QUEUE.length === 0) { fetchObservations(); return; }
+    if (OBSERVATION_QUEUE.length === 0) { return fetchObservations(); }
     const obs = OBSERVATION_QUEUE.shift();
     rememberPreviousObservation();
     HISTORY_NAVIGATION_BUSY = true;
@@ -1288,8 +1306,9 @@ function autoSetRegionFromLocality(terms) {
             return `
                 <div class="card" data-id="${obs.id}">
                     <div class="observation-photo-frame">
-                    ${OBSERVATION_HISTORY.length ? '<button type="button" class="observation-nav-button observation-nav-previous" onclick="showPreviousObservation()" aria-label="Previous observation" title="Previous observation"></button>' : ''}
-                    <button type="button" class="observation-nav-button observation-nav-skip" onclick="excludeAndNext(${obs.id})" aria-label="Next observation" title="Next observation"></button>
+                    ${OBSERVATION_HISTORY.length ? '<button type="button" class="observation-nav-button observation-nav-previous" onclick="navigateObservation(\'previous\')" aria-label="Previous observation" title="Previous observation"></button>' : ''}
+                    <button type="button" class="observation-nav-button observation-nav-skip" onclick="navigateObservation('next', ${obs.id})" aria-label="Next observation" title="Next observation"></button>
+                    <div class="observation-loading-status" role="status" aria-live="polite">Loading observation…</div>
                     <div class="img-container" 
 		     onclick="handleZoom(event)" 
 		     onmousemove="handleZoom(event)"
@@ -1689,7 +1708,7 @@ function finishConfirmedImmediateID(observationId) {
 
     function excludeAndNext(obsId) {
         if (!FINISHED_OBS_IDS.includes(obsId)) FINISHED_OBS_IDS.push(obsId);
-        showNextFromQueue();
+        return showNextFromQueue();
     }
 
     /* --- MATRIX CORE LOGIC --- */
