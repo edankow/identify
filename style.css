@@ -117,6 +117,42 @@
 }
 
         .card { width: 100%; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+.observation-photo-frame { position: relative; }
+
+.observation-nav-button {
+    position: absolute;
+    top: 50%;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 56px;
+    padding: 0;
+    transform: translateY(-50%);
+    border: 0;
+    background: rgba(55, 55, 55, 0.76);
+    cursor: pointer;
+}
+
+.observation-nav-button::before {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-top: 3px solid white;
+    border-right: 3px solid white;
+}
+
+.observation-nav-previous { left: 0; border-radius: 0 6px 6px 0; }
+.observation-nav-previous::before { transform: rotate(225deg); }
+.observation-nav-skip { right: 0; border-radius: 6px 0 0 6px; }
+.observation-nav-skip::before { transform: rotate(45deg); }
+
+.observation-nav-button:hover,
+.observation-nav-button:focus-visible {
+    background: rgba(35, 35, 35, 0.9);
+}
         
         /* Updated Image Container for Zoom functionality */
 .img-container {
