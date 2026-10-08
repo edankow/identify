@@ -330,6 +330,7 @@
 	const GOATCOUNTER_EVENT_QUEUE = [];
 	let BATCH_SIZE = 30
     let CURRENT_COMMUNITY_ID = null;
+    const COMMUNITY_VOTE_TASKS = new Map();
     let CURRENT_PLACE_ID = window.DEFAULT_PLACE_ID; // Default from header.js
     let OTHER_FILTERS = ""; // Default other filters
     let API_BASE = `https://api.inaturalist.org/v1/observations?taxon_id=${window.DEFAULT_TAXON}&only_id=false&fields=all`;
@@ -1461,45 +1462,58 @@ async function setCommunityTaxonStatus(taxonInfo, observationId = CURRENT_OBS_ID
         return;
     }
 
-    // Preserve the observation and taxon while waiting for iNaturalist to
-    // recalculate the community taxon.
-    const COMM_CURRENT = observationId
-    const TAXON_OLD = taxonInfo
+    const previous = COMMUNITY_VOTE_TASKS.get(observationId);
+    const state = { cancelled: false, votedNo: previous?.votedNo || false, task: null };
+    if (previous) previous.cancelled = true;
+    COMMUNITY_VOTE_TASKS.set(observationId, state);
+    state.task = (async () => {
+        if (previous?.task) await previous.task;
+        if (previous?.votedNo) state.votedNo = true;
+        if (state.cancelled) return;
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        if (state.cancelled) return;
+        try {
+            const response = await fetch(`https://api.inaturalist.org/v1/observations/${observationId}`);
+            if (!response.ok) throw new Error(`Observation lookup returned ${response.status}`);
+            const data = await response.json();
+            if (state.cancelled || taxonInfo.rank === "species" ||
+                data.results?.[0]?.community_taxon_id !== taxonInfo.taxonId) return;
+            const voteResponse = await fetch(`https://api.inaturalist.org/v1/votes/vote/observation/${observationId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+                body: JSON.stringify({ vote: "down", scope: "needs_id" })
+            });
+            if (!voteResponse.ok) throw new Error(`Vote returned ${voteResponse.status}`);
+            state.votedNo = true;
+        } catch (error) {
+            console.error("Could not mark community ID as complete:", error);
+        }
+    })();
+    return state.task;
+}
 
-    // 10 second delay for server processing of initial ID
-    await new Promise(resolve => setTimeout(resolve, 10000));
-
-    const response = await fetch(`https://api.inaturalist.org/v1/observations/${COMM_CURRENT}`);
-    const data = await response.json();
-    const latestCommunityID = data.results[0].community_taxon_id;
-
-    // Compare: Only vote if new ID matches existing community ID
-    if (TAXON_OLD.rank !== "species" && latestCommunityID === TAXON_OLD.taxonId) {
-                console.log(`ID is at rank: ${TAXON_OLD.rank}. Sending cannot improve community ID...`);
-
-	    try {
-	    	  const response = await fetch(`https://api.inaturalist.org/v1/votes/vote/observation/${COMM_CURRENT}`, {
-	            method: "POST",
-	            headers: {
-	                "Content-Type": "application/json",
-	                "Authorization": `Bearer ${MY_TOKEN}`
-	            },
-	            body: JSON.stringify({
-	                vote: "down",
-	                scope: "needs_id"
-	            })
-	           });
-	
-	        if (response.ok) {
-	            console.log(`Successfully voted to end "Needs ID" for observation ${COMM_CURRENT}`);
-	        } else { 
-			console.error("Failed to update status:", await response.json());
-		}
-	    } catch (e) {
-	        console.error("Network error:", e);
-	    }   
-
-    }
+async function removeCommunityTaxonStatus(observationId) {
+    const previous = COMMUNITY_VOTE_TASKS.get(observationId);
+    if (!previous) return;
+    previous.cancelled = true;
+    const state = { cancelled: false, votedNo: false, task: null };
+    COMMUNITY_VOTE_TASKS.set(observationId, state);
+    state.task = (async () => {
+        if (previous.task) await previous.task;
+        if (!previous.votedNo || state.cancelled) return;
+        try {
+            const response = await fetch(`https://api.inaturalist.org/v1/votes/unvote/observation/${observationId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${MY_TOKEN}` },
+                body: JSON.stringify({ vote: "down", scope: "needs_id" })
+            });
+            if (!response.ok) throw new Error(`Unvote returned ${response.status}`);
+        } catch (error) {
+            state.votedNo = true;
+            console.error("Could not remove the previous community ID vote:", error);
+        }
+    })();
+    return state.task;
 }
 
 function shouldPostIdentificationSignature(taxonInfo) {
@@ -1579,6 +1593,7 @@ function submitIdentificationShortcut(taxonId, cannotIdFurther) {
             return;
         }
         if (cannotIdFurther) setCommunityTaxonStatus(taxonInfo, observationId);
+        else removeCommunityTaxonStatus(observationId);
     });
     excludeAndNext(observationId);
 }
@@ -1748,6 +1763,7 @@ function submitConfirmedImmediateID() {
             return;
         }
         if (markBestPossible) setCommunityTaxonStatus(submittedTaxon, pending.observationId);
+        else removeCommunityTaxonStatus(pending.observationId);
     });
 
     finishConfirmedImmediateID(pending.observationId);
