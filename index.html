@@ -1241,6 +1241,55 @@ function autoSetRegionFromLocality(terms) {
             .replace(/\r?\n/g, '<br>');
     }
 
+    let observationCardSize = null;
+
+    function applyObservationCardSize() {
+        if (!observationCardSize) return;
+        const panel = document.querySelector('.viewer-panel');
+        const photo = panel?.querySelector('.img-container');
+        if (!panel || !photo) return;
+        const workspace = panel.closest('.workspace-grid');
+        const availableWidth = workspace.clientWidth - 20 - 320;
+        const width = Math.max(280, Math.min(observationCardSize.width, availableWidth));
+        panel.style.flex = `0 0 ${width}px`;
+        panel.style.maxWidth = 'none';
+        photo.style.height = `${observationCardSize.height}px`;
+    }
+
+    function startObservationResize(event) {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        const handle = event.currentTarget;
+        const panel = handle.closest('.viewer-panel');
+        const photo = panel.querySelector('.img-container');
+        const initialWidth = panel.getBoundingClientRect().width;
+        const initialHeight = photo.getBoundingClientRect().height;
+        const startX = event.clientX;
+        const startY = event.clientY;
+        handle.setPointerCapture(event.pointerId);
+        document.body.classList.add('observation-resizing');
+        const move = e => {
+            const workspace = panel.closest('.workspace-grid');
+            const maxWidth = Math.max(280, workspace.clientWidth - 20 - 320);
+            observationCardSize = {
+                width: Math.max(280, Math.min(maxWidth, initialWidth + e.clientX - startX)),
+                height: Math.max(200, Math.min(900, initialHeight + e.clientY - startY))
+            };
+            applyObservationCardSize();
+        };
+        const finish = () => {
+            document.body.classList.remove('observation-resizing');
+            handle.removeEventListener('pointermove', move);
+            handle.removeEventListener('pointerup', finish);
+            handle.removeEventListener('pointercancel', finish);
+        };
+        handle.addEventListener('pointermove', move);
+        handle.addEventListener('pointerup', finish);
+        handle.addEventListener('pointercancel', finish);
+    }
+
+    window.addEventListener('resize', applyObservationCardSize);
+
     function renderObservations(observations, geoHierarchy) {
 	const grid = document.getElementById('observation-grid');
         grid.innerHTML = observations.map(obs => {
@@ -1329,6 +1378,7 @@ function autoSetRegionFromLocality(terms) {
                 Click to Zoom (Space key)
             </div>
         </div>
+        <button type="button" class="observation-resize-handle" onpointerdown="startObservationResize(event)" aria-label="Drag to resize observation photo area" title="Drag to resize observation photo area"></button>
         </div>
 
           <div class="card-content-split">
@@ -1375,6 +1425,7 @@ function autoSetRegionFromLocality(terms) {
 
                 </div>`;
         }).join('');
+        applyObservationCardSize();
         updatePostIdButtonLabels();
     }
 

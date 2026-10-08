@@ -89,6 +89,7 @@
 .viewer-panel {
     flex: 1 1 500px; /* Grow: 1, Shrink: 1, Base: 500px */
     max-width: 800px; /* Prevents the photo from getting absurdly large */
+    box-sizing: border-box;
     background: #e9ecef;
     padding: 20px;
     border-radius: 12px;
@@ -117,6 +118,34 @@
 }
 
         .card { width: 100%; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+.observation-resize-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px 0 12px 0;
+    background: rgba(44, 62, 80, 0.82);
+    color: white;
+    cursor: nwse-resize;
+    touch-action: none;
+}
+.observation-resize-handle::after {
+    content: '';
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 11px;
+    height: 11px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+}
+.observation-resize-handle:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+body.observation-resizing, body.observation-resizing * { cursor: nwse-resize !important; user-select: none !important; }
 
 .observation-photo-frame { position: relative; }
 
